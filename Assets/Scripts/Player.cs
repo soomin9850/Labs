@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
         GameObject OBJ = Instantiate(Sniper, Home.transform.position, Quaternion.identity);
         GameManager.Instance.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
         OBJ.SetActive(false);
-        //Stage1Dialogue.SetActive(true);
+        Stage1Dialogue.SetActive(true);
     }
     void Update()
     {
