@@ -20,16 +20,8 @@ public class MainUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI RsText;
     [SerializeField] TextMeshProUGUI FrameText;
     [SerializeField] TextMeshProUGUI[] SoundValue = new TextMeshProUGUI[3];
-    Vector2 MousePos;
-    bool DoubleClick;
-    GameManager GM;
-    Camera mainCam;
-    [SerializeField] GameObject BuildingSet;
-    BuildInfo info;
     void Start()
     {
-        GM = GameManager.Instance;
-        mainCam = Camera.main;
         Sync();
     }
     public void OBJOnOff(GameObject OBJ)
@@ -48,70 +40,10 @@ public class MainUI : MonoBehaviour
     {
         Application.Quit();
     }
-
-    //게임 중 UI
-    public void CharList(GameObject List)
+    public void LoadScene(string sceneName)
     {
-        RectTransform rectT = List.GetComponent<RectTransform>();
-
-        if (rectT.anchoredPosition.x < 0) rectT.anchoredPosition = new Vector2(0, 0);
-        else if (rectT.anchoredPosition.x == 0) rectT.anchoredPosition = new Vector2(-500, 0);
+        SceneManager.LoadScene(sceneName);
     }
-    public void ClickMoustPos()
-    {
-        MousePos = Input.mousePosition;
-    }
-    public void CharClick(int Index)
-    {
-        if (GM.Character[Index] == null)
-        {
-            StartCoroutine(CharSpawn(Index));
-            return;
-        }
-        else if(GM.Character[Index] != null)
-        {
-            mainCam.transform.position = GM.Character[Index].transform.position;
-        }
-        if (!DoubleClick)
-        {
-            DoubleClick = true;
-            StartCoroutine(doubleClick());
-        }
-        else if (DoubleClick)
-        {
-            Debug.Log("DoubleClick");
-            if (GM.Character[Index] != null && GM.Character[Index].activeSelf)
-            {
-                mainCam.transform.position = GM.Character[Index].transform.position;
-            }
-        }
-    }
-    public void ListDrag(GameObject Lists)
-    {
-        float Dis = 0f;
-        if (Input.mousePosition.x > MousePos.x)
-        {
-            Dis = Input.mousePosition.x - MousePos.x;
-        }
-        else if(Input.mousePosition.x < MousePos.x)
-        {
-            Dis = Input.mousePosition.x - MousePos.x;
-        }
-        RectTransform rectT = Lists.GetComponent<RectTransform>();
-        rectT.anchoredPosition += new Vector2(Dis, 0);
-
-        if (rectT.anchoredPosition.x < -1400f) rectT.anchoredPosition = new Vector2(-1400, 0);
-        else if (rectT.anchoredPosition.x > 0) rectT.anchoredPosition = new Vector2(0, 0);
-
-        MousePos = Input.mousePosition;
-    }
-    public void SpawnCharacter()
-    {
-        GameObject OBJ = Instantiate(GM.CharacterPrefab[info.Index], info.Building.position, Quaternion.identity);
-        GM.Character[info.Index] = OBJ;
-        GM.InBuilding(info.Building.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
-    }
-
     //설정
     public void Sync()
     {
@@ -188,37 +120,5 @@ public class MainUI : MonoBehaviour
         if (GameManager.Instance.Sound[Index] <= 0)
             GameManager.Instance.Sound[Index] = 0;
         SetSoundSlider(Index);
-    }
-
-    //코루틴
-    IEnumerator CharSpawn(int Index)
-    {
-        GameObject Icon = GameObject.Find("CharIcon");
-        Icon.GetComponent<SpriteRenderer>().sprite = GM.CharacterPrefab[Index].GetComponent<CharacterManager>().Icon;
-        while (true)
-        {
-            Vector2 MousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-            Icon.transform.position = MousePos;
-            if (Input.GetMouseButtonUp(0))
-            {
-                RaycastHit2D hit = Physics2D.Raycast(MousePos, Vector3.forward, 1, 1 << 9);
-                RaycastHit2D hit1 = Physics2D.Raycast(MousePos, Vector3.forward, 1, 1 << 12); // 시야 체크
-                if (hit.collider != null && hit1.collider != null)
-                {
-                    BuildingSet.SetActive(true);
-                    info = new BuildInfo();
-                    info.Building = hit.transform;
-                    info.Index = Index;
-                }
-                break;
-            }
-            yield return null;
-        }
-        Icon.GetComponent<SpriteRenderer>().sprite = null;
-    }
-    IEnumerator doubleClick()
-    {
-        yield return new WaitForSeconds(0.2f);
-        DoubleClick = false;
     }
 }

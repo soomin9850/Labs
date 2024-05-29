@@ -3,16 +3,15 @@ using System.Collections;
 using UnityEngine;
 public class Enemy : CharacterManager
 {
-    bool CanAttack = true;
-    Coroutine Wait;
     WaitForSeconds WaitForSeconds = new WaitForSeconds(0.01f);
     void Start()
     {
         WallTileMap = GM.WallTile;
         BuildingTileMap = GM.BuildingTile;
         AttackCoroutine = StartCoroutine(AttackThis(null));
+        die += EnemyDie;
         StopCoroutine(AttackCoroutine);
-        Invoke("WaitStart", 10);
+        Invoke("WaitStart", 3);
     }
     void WaitStart()
     {
@@ -52,23 +51,7 @@ public class Enemy : CharacterManager
             }
             else if (CanAttack)
             {
-                CanAttack = false;
-                BulletMake(Bullet, Target, Atk);
-                if (type == Type.machineGun)
-                {
-                    if (MGStat.ShootTime > MGStat.Timer)
-                    {
-                        Wait = StartCoroutine(AttackOn(AttackSpeed));
-                        MGStat.Timer += AttackSpeed;
-                    }
-                    else
-                    {
-                        Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime));
-                        MGStat.Timer = 0;
-                    }
-                }
-                else
-                    Wait = StartCoroutine(AttackOn(AttackSpeed));
+                attackDel();
             }
             if (!CheckWall(Target))
                 Target = null;
@@ -78,23 +61,11 @@ public class Enemy : CharacterManager
         }
         Target = null;
         yield return null;
-        if (type == Type.machineGun)
-        {
-            if (Wait != null)
-                StopCoroutine(Wait);
-            CanAttack = false;
-            Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime - (int)MGStat.Timer * 0.5f));
-            MGStat.Timer = 0;
-        }
+        attackEnd();
         AIStart();
     }
-    public void Die()
+    public void EnemyDie()
     {
         Destroy(gameObject);
-    }
-    IEnumerator AttackOn(float Time)
-    {
-        yield return new WaitForSeconds(Time);
-        CanAttack = true;
     }
 }

@@ -14,6 +14,7 @@ public class CharacterManager : MonoBehaviour
     public Type type;
     public string CharacterName;
     public Sprite Icon;
+    public Sprite Stdillust;
     protected GameManager GM;
     public int MaxHp;
     public GameObject Bar;
@@ -29,7 +30,7 @@ public class CharacterManager : MonoBehaviour
             hp = value;
             HpBar.transform.localScale = new Vector2(BarValue(MaxHp, HP), 1);
             if (hp <= 0)
-                ZeroHP();
+                die();
         }
     }
     [SerializeField] int hp;
@@ -41,7 +42,16 @@ public class CharacterManager : MonoBehaviour
     public int Amor;
     public float AntiAmor;
     protected bool NoDamage;
+    protected bool CanAttack = true;
 
+    public delegate void AttackDelegate();
+    public AttackDelegate attackDel;
+    public AttackDelegate attackEnd;
+
+    public delegate void Die();
+    public Die die;
+
+    protected Coroutine Wait;
     public GameObject Target;
 
     [SerializeField] protected Tilemap WallTileMap;
@@ -55,7 +65,7 @@ public class CharacterManager : MonoBehaviour
     public Coroutine AttackCoroutine;
     int FIndCount;
 
-    public MG MGStat = null;
+    public MG MGStat;
     protected virtual void Awake()
     {
         HpBar = Bar.transform.GetChild(1).gameObject;
@@ -70,9 +80,15 @@ public class CharacterManager : MonoBehaviour
         Child.parent = transform;
         MoveCoroutine = StartCoroutine(StartMove());
         StopCoroutine(MoveCoroutine);
-        if (type != Type.machineGun)
+        if (type == Type.machineGun)
         {
-            MGStat = null;
+            attackDel = MgAttack;
+            attackEnd = MgAttackEnd;
+        }
+        else
+        {
+            attackDel = DefaultAttack;
+            attackEnd = AIStart;
         }
     }
     void OnDisable()
@@ -107,14 +123,40 @@ public class CharacterManager : MonoBehaviour
         }
         HP -= Damage;
     }
-    void ZeroHP()
+    public void MgAttack()
     {
-        if (TryGetComponent(out Building building))
-            building.Die();
-        else if(TryGetComponent(out Tower tower))
-            tower.Die();
-        else if(TryGetComponent(out Enemy enemy))
-            enemy.Die();
+        CanAttack = false;
+        BulletMake(Bullet, Target, Atk);
+        if (MGStat.ShootTime > MGStat.Timer)
+        {
+            Wait = StartCoroutine(AttackOn(AttackSpeed));
+            MGStat.Timer += AttackSpeed;
+        }
+        else
+        {
+            Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime));
+            MGStat.Timer = 0;
+        }
+    }
+    public void MgAttackEnd()
+    {
+        if (Wait != null)
+            StopCoroutine(Wait);
+        CanAttack = false;
+        Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime - (int)MGStat.Timer * 0.5f));
+        MGStat.Timer = 0;
+        AIStart();
+    }
+    public void DefaultAttack()
+    {
+        CanAttack = false;
+        BulletMake(Bullet, Target, Atk);
+        Wait = StartCoroutine(AttackOn(AttackSpeed));
+    }
+    protected IEnumerator AttackOn(float Time)
+    {
+        yield return new WaitForSeconds(Time);
+        CanAttack = true;
     }
     IEnumerator StartMove()
     {
@@ -258,11 +300,4 @@ public class CharacterManager : MonoBehaviour
             return GM.bulletOne.Dequeue();
         return null;
     }
-}
-[System.Serializable]
-public class MG
-{
-    public float ReLoadTime;
-    public float ShootTime;
-    public float Timer;
 }

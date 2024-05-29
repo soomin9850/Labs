@@ -227,10 +227,10 @@ MonoBehaviour:
   player: {fileID: 0}
   WallTile: {fileID: 0}
   BuildingTile: {fileID: 0}
-  CharacterPrefab:
-  - {fileID: 3261115973280036088, guid: f0087e749af6bf14aa15796742650f73, type: 3}
-  - {fileID: 0}
-  - {fileID: 0}
+  Characterlist:
+  - {fileID: 11400000, guid: f4d6e29681f1c3a49973b1aeb34137f6, type: 2}
+  - {fileID: 11400000, guid: 233394e47495a61418de8bf5f64fbeed, type: 2}
+  - {fileID: 11400000, guid: 1c54a45a8eccf9146a6c58244490bfc9, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   Character:

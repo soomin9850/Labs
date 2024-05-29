@@ -164,7 +164,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8748a4a9a9c10da44a9d22e409b470f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Icon: {fileID: 3153507818212263266, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
+  type: 4
+  CharacterName: Sniper
+  Icon: {fileID: -2281047201784745243, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
+  Stdillust: {fileID: -2281047201784745243, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
   MaxHp: 80
   Bar: {fileID: 2748044092366945747}
   hp: 0
@@ -182,10 +185,9 @@ MonoBehaviour:
   ClosePos: []
   MovePos: []
   Value: []
-  Another: []
   TargetPos: {x: 0, y: 0}
+  MGStat: {fileID: 0}
   PlayerOrder: 0
-  type: 4
 --- !u!1 &2748044092366945747
 GameObject:
   m_ObjectHideFlags: 0
