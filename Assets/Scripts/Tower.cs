@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class Tower : CharacterManager
 {
+    [SerializeField] bool CanAttack = true;
     public bool PlayerOrder;
+    Coroutine Wait;
     WaitForSeconds WaitForSeconds = new WaitForSeconds(0.01f);
     void Start()
     {
         AttackCoroutine = StartCoroutine(AttackThis(null));
         StopCoroutine(AttackCoroutine);
-        die += TowerDie;
     }
     void OnDisable()
     {
@@ -49,7 +50,23 @@ public class Tower : CharacterManager
             }
             else if (CanAttack)
             {
-                attackDel();
+                CanAttack = false;
+                BulletMake(Bullet, Target, Atk);
+                if (type == Type.machineGun)
+                {
+                    if(MGStat.ShootTime > MGStat.Timer)
+                    {
+                        Wait = StartCoroutine(AttackOn(AttackSpeed));
+                        MGStat.Timer += AttackSpeed;
+                    }
+                    else
+                    {
+                        Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime));
+                        MGStat.Timer = 0;
+                    }
+                }
+                else
+                    Wait = StartCoroutine(AttackOn(AttackSpeed));
             }
             if (!CheckWall(Target))
             {
@@ -58,7 +75,14 @@ public class Tower : CharacterManager
             yield return WaitForSeconds;
         }
         yield return null;
-        attackEnd();
+        if (type == Type.machineGun)
+        {
+            if (Wait != null)
+                StopCoroutine(Wait);
+            CanAttack = false;
+            Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime - (int)MGStat.Timer * 0.5f));
+            MGStat.Timer = 0;
+        }
         AIStart();
     }
     public IEnumerator GoInBuilding(GameObject OBJ)
@@ -74,8 +98,13 @@ public class Tower : CharacterManager
         }
         yield return null;
     }
-    public void TowerDie()
+    public void Die()
     {
         gameObject.SetActive(false);
+    }
+    IEnumerator AttackOn(float Time)
+    {
+        yield return new WaitForSeconds(Time);
+        CanAttack = true;
     }
 }

@@ -7,6 +7,7 @@ public class Building : CharacterManager
 {
     public float BuildingSize = 0;
     [SerializeField] int MaxBarrier;
+    Coroutine Wait;
     int Barrier
     {
         get
@@ -22,6 +23,7 @@ public class Building : CharacterManager
     [SerializeField] int barrier;
     GameObject BarrierBar;
 
+    [SerializeField] bool CanAttack = true;
     public Vector3 ExitDir = Vector3.zero;
     public bool InPlayer;
     WaitForSeconds WaitForSeconds = new WaitForSeconds(0.01f);
@@ -39,7 +41,6 @@ public class Building : CharacterManager
     void Start()
     {
         AttackCoroutine = StartCoroutine(AttackThis(null));
-        die += BuildingDie;
         StopCoroutine(AttackCoroutine);
     }
     public void BarrierHit(int Atk)
@@ -80,9 +81,26 @@ public class Building : CharacterManager
         }
         while (Target != null && InPlayer)
         {
+            Debug.Log(gameObject.name);
             if (CanAttack)
             {
-                attackDel();
+                CanAttack = false;
+                BulletMake(Bullet, Target, Atk);
+                if (type == Type.machineGun)
+                {
+                    if (MGStat.ShootTime > MGStat.Timer)
+                    {
+                        Wait = StartCoroutine(AttackOn(AttackSpeed));
+                        MGStat.Timer += AttackSpeed;
+                    }
+                    else
+                    {
+                        Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime));
+                        MGStat.Timer = 0;
+                    }
+                }
+                else
+                    Wait = StartCoroutine(AttackOn(AttackSpeed));
             }
             if (Vector2.Distance(Target.transform.position, transform.position) > Sight + 5f)
                 Target = null;
@@ -95,6 +113,7 @@ public class Building : CharacterManager
         yield return null;
         if (type == Type.machineGun)
         {
+            Debug.Log("End");
             if (Wait != null)
                 StopCoroutine(Wait);
             CanAttack = false;
@@ -102,11 +121,14 @@ public class Building : CharacterManager
             MGStat.Timer = 0;
         }
     }
-    public void BuildingDie()
+    public void Die()
     {
-        CharacterManager character = transform.GetChild(transform.childCount - 1).GetComponent<CharacterManager>();
-        GameManager.Instance.OutBuilding(GetComponent<CharacterManager>(), character);
-        character.die();
+        GameManager.Instance.OutBuilding(GetComponent<CharacterManager>(), transform.GetChild(transform.childCount - 1).GetComponent<CharacterManager>());
         NoDamage = true;
+    }
+    IEnumerator AttackOn(float Time)
+    {
+        yield return new WaitForSeconds(Time);
+        CanAttack = true;
     }
 }

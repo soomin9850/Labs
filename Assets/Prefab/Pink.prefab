@@ -451,7 +451,7 @@ GameObject:
   - component: {fileID: 591421935707040214}
   - component: {fileID: 5794633880833676874}
   m_Layer: 6
-  m_Name: Emily
+  m_Name: Pink
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -601,10 +601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8748a4a9a9c10da44a9d22e409b470f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 1
-  CharacterName: Emily
-  Icon: {fileID: 3153507818212263266, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
-  Stdillust: {fileID: -5308045235413482435, guid: ebf2ec2a7fb71b44daa95e107967d74b, type: 3}
+  Icon: {fileID: -7220690672292382759, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
   MaxHp: 90
   Bar: {fileID: 2662081552049381530}
   hp: 0
@@ -622,9 +619,10 @@ MonoBehaviour:
   ClosePos: []
   MovePos: []
   Value: []
+  Another: []
   TargetPos: {x: 0, y: 0}
-  MGStat: {fileID: 0}
   PlayerOrder: 0
+  type: 1
 --- !u!1 &3816040702174319762
 GameObject:
   m_ObjectHideFlags: 0

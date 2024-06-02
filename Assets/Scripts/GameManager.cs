@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     public Tilemap WallTile;
     public Tilemap BuildingTile;
 
-    public CharacterInfo[] Characterlist = new CharacterInfo[5];
+    public GameObject[] CharacterPrefab = new GameObject[5];
     public GameObject[] Character = new GameObject[5];
 
     public float[] Sound = { 1, 1, 1 }; //0 : 전체, 1 : 배경, 2 : 캐릭터
@@ -39,9 +39,7 @@ public class GameManager : MonoBehaviour
         Building.type = Character.type;
         if (Character.type == CharacterManager.Type.machineGun)
         {
-            Building.MGStat = Character.MGStat;
-            Building.attackDel = Building.MgAttack;
-            Building.attackEnd = Building.MgAttackEnd;
+            Building.MGStat = new MG();
             Building.MGStat.ReLoadTime = Character.MGStat.ReLoadTime;
             Building.MGStat.ShootTime = Character.MGStat.ShootTime;
             Building.MGStat.Timer = Character.MGStat.Timer;
