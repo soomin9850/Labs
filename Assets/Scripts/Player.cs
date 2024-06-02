@@ -20,10 +20,10 @@ public class Player : MonoBehaviour
     public List<GameObject> SelectCharacter = new List<GameObject>();
     public List<GameObject> SelectBuilding = new List<GameObject>();
 
-    [SerializeField] GameObject Sniper;
     [SerializeField] GameObject Home;
 
     [SerializeField] GameObject Stage1Dialogue;
+    [SerializeField] Tile tile;
 
     void Awake()
     {
@@ -33,13 +33,14 @@ public class Player : MonoBehaviour
         //GameManager.Instance.BuildingTile.color = new Color(0, 0, 0, 0);
         GameManager.Instance.player = this;
         Shadow.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 1);
+        tile.color = new Color(1, 0, 0, 0);
     }
     void Start()
     {
-        GameObject OBJ = Instantiate(Sniper, Home.transform.position, Quaternion.identity);
+        GameObject OBJ = Instantiate(GameManager.Instance.Characterlist[0].prefab, Home.transform.position, Quaternion.identity);
+        GameManager.Instance.Character[0] = OBJ;
         GameManager.Instance.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
-        OBJ.SetActive(false);
-        Stage1Dialogue.SetActive(true);
+        //Stage1Dialogue.SetActive(true);
     }
     void Update()
     {
