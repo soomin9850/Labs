@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
     {
         mainCam = Camera.main;
         GameManager.Instance.WallTile = GameObject.Find("Wall").GetComponent<Tilemap>();
-        GameManager.Instance.BuildingTile = GameObject.Find("PathFindingWall").GetComponent<Tilemap>();
+        GameManager.Instance.PathFindTile = GameObject.Find("PathFindingWall").GetComponent<Tilemap>();
         //GameManager.Instance.BuildingTile.color = new Color(0, 0, 0, 0);
         GameManager.Instance.player = this;
         Shadow.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 1);
@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
-        GameObject OBJ = Instantiate(GameManager.Instance.Characterlist[0].prefab, Home.transform.position, Quaternion.identity);
+        GameObject OBJ = Instantiate(GameManager.Instance.Characterlist.characters[0].prefab, Home.transform.position, Quaternion.identity);
         GameManager.Instance.Character[0] = OBJ;
         GameManager.Instance.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
         //Stage1Dialogue.SetActive(true);
@@ -48,6 +48,43 @@ public class Player : MonoBehaviour
         MoveMouse();
         CameraMove();
         BuildingEnteraction();
+        Enteraction();
+    }
+    void Enteraction()
+    {
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            for (int i = 0; i < SelectCharacter.Count; i++)
+            {
+                if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.engineer)
+                {
+                    RaycastHit2D[] hits = Physics2D.CircleCastAll(SelectCharacter[i].transform.position, 1, transform.forward, 1, 1 << 0);
+                    for (int j = 0; j < hits.Length; j++)
+                    {
+                        if (hits[j].transform.CompareTag("Car"))
+                        {
+                            float XDis = hits[j].transform.position.x - SelectCharacter[i].transform.position.x;
+                            float YDis = hits[j].transform.position.y - SelectCharacter[i].transform.position.y;
+                            if (MathF.Abs(XDis) > MathF.Abs(YDis))
+                            {
+                                if (XDis < 0)
+                                    hits[j].transform.GetComponent<Car>().Move(Vector2.left);
+                                else if (XDis > 0)
+                                    hits[j].transform.GetComponent<Car>().Move(Vector2.right);
+                            }
+                            else
+                            {
+                                if (YDis < 0)
+                                    hits[j].transform.GetComponent<Car>().Move(Vector2.down);
+                                else if (YDis > 0)
+                                    hits[j].transform.GetComponent<Car>().Move(Vector2.up);
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
     void BuildingEnteraction()
     {

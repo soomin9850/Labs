@@ -7,11 +7,11 @@ public class Enemy : CharacterManager
     void Start()
     {
         WallTileMap = GM.WallTile;
-        BuildingTileMap = GM.BuildingTile;
+        BuildingTileMap = GM.PathFindTile;
         AttackCoroutine = StartCoroutine(AttackThis(null));
         die += EnemyDie;
         StopCoroutine(AttackCoroutine);
-        Invoke("WaitStart", 3);
+        Invoke("WaitStart", 10);
     }
     void WaitStart()
     {

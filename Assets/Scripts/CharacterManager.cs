@@ -72,7 +72,7 @@ public class CharacterManager : MonoBehaviour
         HP = MaxHp;
         GM = GameManager.Instance;
         WallTileMap = GM.WallTile;
-        BuildingTileMap = GM.BuildingTile;
+        BuildingTileMap = GM.PathFindTile;
         Transform Child = transform.GetChild(transform.childCount - 1);
         Child.parent = null;
         float S = Sight * 2;

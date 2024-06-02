@@ -13,9 +13,9 @@ public class GameManager : MonoBehaviour
     public Queue<GameObject> bulletZero = new Queue<GameObject>();
     public Queue<GameObject> bulletOne = new Queue<GameObject>();
     public Tilemap WallTile;
-    public Tilemap BuildingTile;
+    public Tilemap PathFindTile;
 
-    public CharacterInfo[] Characterlist = new CharacterInfo[5];
+    public CharacterInfo Characterlist;
     public GameObject[] Character = new GameObject[5];
 
     public float[] Sound = { 1, 1, 1 }; //0 : 전체, 1 : 배경, 2 : 캐릭터

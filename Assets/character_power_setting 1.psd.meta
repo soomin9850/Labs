@@ -37,7 +37,7 @@ ScriptedImporter:
     sRGBTexture: 1
     spriteMode: 2
     spriteExtrude: 1
-    spriteMeshType: 1
+    spriteMeshType: 0
     alignment: 0
     spritePivot: {x: 0.5, y: 0.5}
     spritePixelsToUnits: 100
@@ -442,9 +442,9 @@ ScriptedImporter:
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 1441
+      x: 1928
       y: 2256
-      width: 502
+      width: 15
       height: 16
     spriteID: 711a307deef88aa428a324c984f879ed
     spriteBone: []
@@ -519,11 +519,11 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 1441, y: 2280}
     spritePosition: {x: 1106, y: 716}
-  - name: "\uBC30\uACBD \uBC14"
+  - name: "\uBC30\uACBD \uBC14321"
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
+    border: {x: 34, y: 0, z: 34, w: 0}
     rect:
       serializedVersion: 2
       x: 795
@@ -582,11 +582,11 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 4, y: 4011}
     spritePosition: {x: 1713, y: 684}
-  - name: "\uD558\uC580 \uBC14"
+  - name: "\uD558\uC580 \uBC141233"
     originalName: 
     pivot: {x: 0.5, y: 0.5}
-    alignment: 0
-    border: {x: 0, y: 0, z: 0, w: 0}
+    alignment: 9
+    border: {x: 8, y: 0, z: 8, w: 0}
     rect:
       serializedVersion: 2
       x: 1441
@@ -912,7 +912,43 @@ ScriptedImporter:
     characterGroups: []
     pivot: {x: 0, y: 0}
     boneReadOnly: 0
-  platformSettings: []
+  platformSettings:
+  - name: DefaultTexturePlatform
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
+  - name: Standalone
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
+  - name: Android
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
   mosaicLayers: 1
   characterMode: 1
   documentPivot: {x: 0, y: 0}

@@ -14,7 +14,7 @@ public class Bullet : MonoBehaviour
     {
         if (Target == null || !Target.activeSelf)
         {
-            BulletPooling(gameObject);
+            BulletPooling();
             return;
         }
         transform.position = Vector2.MoveTowards(transform.position, Target.transform.position, BulletSpeed * Time.deltaTime);
@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
         if (collision.gameObject == TargetOBJ || collision.CompareTag("Building"))
         {
             collision.GetComponent<CharacterManager>().Hit(Attack, AntiAmor);
-            BulletPooling(gameObject);
+            BulletPooling();
         }
     }
     void ZeroPool(GameObject bullet)
@@ -37,16 +37,15 @@ public class Bullet : MonoBehaviour
         GameManager.Instance.bulletOne.Enqueue(bullet);
         bullet.SetActive(false);
     }
-    void BulletPooling(GameObject bullet)
+    public void BulletPooling()
     {
-        int BulletType = bullet.GetComponent<Bullet>().Type;
-        switch (BulletType)
+        switch (Type)
         {
             case 0:
-                ZeroPool(bullet);
+                ZeroPool(gameObject);
                 break;
             case 1:
-                OnePool(bullet);
+                OnePool(gameObject);
                 break;
         }
     }
