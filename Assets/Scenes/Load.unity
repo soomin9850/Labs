@@ -226,7 +226,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   WallTile: {fileID: 0}
-  BuildingTile: {fileID: 0}
+  PathFindTile: {fileID: 0}
   Characterlist: {fileID: 11400000, guid: 1c54a45a8eccf9146a6c58244490bfc9, type: 2}
   Character:
   - {fileID: 0}

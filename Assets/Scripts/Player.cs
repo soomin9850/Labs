@@ -146,7 +146,8 @@ public class Player : MonoBehaviour
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
                 CharacterManager tower = SelectCharacter[i].GetComponent<Tower>();
-                tower.StopAllCoroutines();
+                tower.StopCoroutine(tower.AttackCoroutine);
+                tower.StopCoroutine(tower.MoveCoroutine);
                 tower.TargetPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
                 SelectCharacter[i].transform.GetComponent<Tower>().PlayerOrder = true;
                 tower.Target = null;

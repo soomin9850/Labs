@@ -2,25 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static CharacterManager;
 
 public class Car : MonoBehaviour
 {
     [SerializeField] int Width;
     [SerializeField] int Height;
     [SerializeField] Tilemap PathFindTile;
+    [SerializeField] Tilemap WallTile;
     [SerializeField] TileBase TileBase;
+    public int MaxHP;
+    public int HP;
     public bool isMove;
     void Start()
     {
         PathFindTile = GameManager.Instance.PathFindTile;
+        WallTile = GameManager.Instance.WallTile;
+        HP = MaxHP;
         Set();
     }
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Bullet"))
         {
-            collision.GetComponent<Bullet>().BulletPooling();
+            Bullet B = collision.GetComponent<Bullet>();
+            B.BulletPooling();
+            HP -= B.Attack;
+            if (HP < 0)
+            {
+                HP = 0;
+                transform.GetChild(0).GetComponent<BoxCollider2D>().enabled = false;
+                transform.GetChild(0).GetComponent<SpriteRenderer>().color = Color.red;
+            }
         }
     }
     public void Move(Vector2 Dir)
@@ -40,9 +52,11 @@ public class Car : MonoBehaviour
         {
             for (int y = 0; y < Height; y++)
             {
-                Vector3Int vector3 = new Vector3Int((int)Target.x + x, (int)Target.y + y);
-                if (PathFindTile.GetTile(vector3) != null)
+                Vector3Int vector3 = new Vector3Int(Mathf.RoundToInt(Target.x) + x, Mathf.RoundToInt(Target.y) + y);
+                if (PathFindTile.GetTile(vector3) != null || WallTile.GetTile(vector3) != null)
                     CanMove = false;
+                //Debug.Log(PathFindTile.GetTile(vector3));
+                //Debug.Log(WallTile.GetTile(vector3));
             }
         }
         if(CanMove)
@@ -52,8 +66,8 @@ public class Car : MonoBehaviour
                 transform.position = Vector2.MoveTowards(transform.position, Target, 5 * Time.deltaTime);
                 yield return null;
             }
+            transform.position = Target;
         }
-        transform.position = Target;
         yield return null;
         isMove = false;
         Set();

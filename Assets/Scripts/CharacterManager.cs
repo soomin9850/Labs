@@ -42,7 +42,7 @@ public class CharacterManager : MonoBehaviour
     public int Amor;
     public float AntiAmor;
     protected bool NoDamage;
-    protected bool CanAttack = true;
+    [SerializeField] public bool CanAttack = true;
 
     public delegate void AttackDelegate();
     public AttackDelegate attackDel;

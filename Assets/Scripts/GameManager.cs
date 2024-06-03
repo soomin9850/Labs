@@ -65,7 +65,12 @@ public class GameManager : MonoBehaviour
         Child.gameObject.SetActive(true);
         Character.transform.gameObject.transform.parent = Building.transform.gameObject.transform;
         Building.transform.GetChild(0).gameObject.SetActive(true);
-        Character.transform.gameObject.SetActive(false);
+        StartCoroutine(Wait(Character.transform.gameObject));
+    }
+    IEnumerator Wait(GameObject OBJ)
+    {
+        yield return null;
+        OBJ.SetActive(false);
     }
     public void OutBuilding(CharacterManager Building, CharacterManager Character)
     {

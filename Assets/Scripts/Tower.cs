@@ -6,7 +6,7 @@ public class Tower : CharacterManager
 {
     public bool PlayerOrder;
     WaitForSeconds WaitForSeconds = new WaitForSeconds(0.01f);
-    void Start()
+    public void Start()
     {
         AttackCoroutine = StartCoroutine(AttackThis(null));
         StopCoroutine(AttackCoroutine);

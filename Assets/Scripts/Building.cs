@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 public class Building : CharacterManager
 {
     public float BuildingSize = 0;
+    SpriteRenderer SR;
+    Color Half = new Color(1, 1, 1, 0.5f);
     [SerializeField] int MaxBarrier;
     int Barrier
     {
@@ -28,6 +30,7 @@ public class Building : CharacterManager
     protected override void Awake()
     {
         base.Awake();
+        SR = GetComponent<SpriteRenderer>();
         BarrierBar = Bar.transform.GetChild(0).gameObject;
         Barrier = MaxBarrier;
         Bar.SetActive(false);
@@ -57,6 +60,13 @@ public class Building : CharacterManager
         {
             Building_CheckWall(collision.gameObject);
         }
+        else if (collision.CompareTag("Player"))
+            SR.color = Half;
+    }
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+            SR.color = Color.white;
     }
     void Building_CheckWall(GameObject target)
     {
