@@ -9,7 +9,7 @@ public class CharacterManager : MonoBehaviour
 {
     public enum Type
     {
-        rifle, search, machineGun, engineer, sniper, antiTank, mineThrower
+        rifle, search, machineGun, engineer, sniper, antiTank, mineThrower, tank
     }
     public Type type;
     public string CharacterName;
@@ -100,8 +100,8 @@ public class CharacterManager : MonoBehaviour
         MovePos.Clear();
         ClosePos.Clear();
         Value.Clear();
-        float NowX = Mathf.Round(transform.position.x);
-        float NowY = Mathf.Round(transform.position.y);
+        float NowX = transform.position.x;
+        float NowY = transform.position.y;
         Vector2 NowPos = new Vector2(NowX, NowY);
         MovePos.Add(NowPos);
         if (MoveCoroutine != null)

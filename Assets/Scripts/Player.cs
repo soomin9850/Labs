@@ -22,9 +22,14 @@ public class Player : MonoBehaviour
 
     [SerializeField] GameObject Home;
 
-    [SerializeField] GameObject Stage1Dialogue;
-    [SerializeField] Tile tile;
+    [SerializeField] GameObject Dialogue;
 
+    public int MineCount;
+    public GameObject TankMine;
+    public GameObject HumanMine;
+
+    public int TrenchCount;
+    public int Trench;
     void Awake()
     {
         mainCam = Camera.main;
@@ -33,14 +38,13 @@ public class Player : MonoBehaviour
         //GameManager.Instance.BuildingTile.color = new Color(0, 0, 0, 0);
         GameManager.Instance.player = this;
         Shadow.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 1);
-        tile.color = new Color(1, 0, 0, 0);
     }
     void Start()
     {
         GameObject OBJ = Instantiate(GameManager.Instance.Characterlist.characters[0].prefab, Home.transform.position, Quaternion.identity);
         GameManager.Instance.Character[0] = OBJ;
         GameManager.Instance.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
-        //Stage1Dialogue.SetActive(true);
+        //Dialogue.SetActive(true);
     }
     void Update()
     {
@@ -52,7 +56,7 @@ public class Player : MonoBehaviour
     }
     void Enteraction()
     {
-        if(Input.GetKeyDown(KeyCode.F))
+        if(Input.GetKeyDown(KeyCode.E))
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
@@ -88,7 +92,7 @@ public class Player : MonoBehaviour
     }
     void BuildingEnteraction()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.O))
         {
             for (int i = 0; i < SelectBuilding.Count; i++)
             {
@@ -97,7 +101,7 @@ public class Player : MonoBehaviour
                     GameManager.Instance.OutBuilding(CM, CM.transform.GetChild(CM.transform.childCount - 1).transform.GetComponent<CharacterManager>());
             }
         }
-        else if (Input.GetKey(KeyCode.E) && Input.GetMouseButtonDown(1))
+        else if (Input.GetKey(KeyCode.I) && Input.GetMouseButtonDown(1))
         {
             RaycastHit2D hit = Physics2D.Raycast(mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 2, 1 << 9);
             if (hit.collider != null)
