@@ -114,9 +114,14 @@ public class Building : CharacterManager
     }
     public void BuildingDie()
     {
-        CharacterManager character = transform.GetChild(transform.childCount - 1).GetComponent<CharacterManager>();
-        GameManager.Instance.OutBuilding(GetComponent<CharacterManager>(), character);
-        character.die();
+        if(InPlayer)
+        {
+            CharacterManager character = transform.GetChild(transform.childCount - 1).GetComponent<CharacterManager>();
+            GameManager.Instance.OutBuilding(GetComponent<CharacterManager>(), character);
+            character.die();
+        }
+        this.enabled = false;
+        //GetComponent<SpriteRenderer>().sprite = ±×°Å;
         NoDamage = true;
     }
 }
