@@ -253,6 +253,7 @@ MonoBehaviour:
   CharacterName: Mg
   Icon: {fileID: -7220690672292382759, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
   Stdillust: {fileID: -7220690672292382759, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
+  StatStdillust: {fileID: 0}
   MaxHp: 150
   Bar: {fileID: 6188158133400608580}
   hp: 0
@@ -263,6 +264,7 @@ MonoBehaviour:
   Atk: 5
   Amor: 0
   AntiAmor: 70
+  CanAttack: 1
   Target: {fileID: 0}
   WallTileMap: {fileID: 0}
   BuildingTileMap: {fileID: 0}
@@ -287,7 +289,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ReLoadTime: 5
   ShootTime: 10
-  Timer: 0
+  Timer: 5
 --- !u!1 &1709445035965764679
 GameObject:
   m_ObjectHideFlags: 0

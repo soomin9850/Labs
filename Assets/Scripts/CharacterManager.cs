@@ -15,6 +15,7 @@ public class CharacterManager : MonoBehaviour
     public string CharacterName;
     public Sprite Icon;
     public Sprite Stdillust;
+    public Sprite StatStdillust;
     protected GameManager GM;
     public int MaxHp;
     public GameObject Bar;
@@ -65,6 +66,7 @@ public class CharacterManager : MonoBehaviour
     public Coroutine AttackCoroutine;
     int FIndCount;
 
+    protected bool Coru;
     public MG MGStat;
     protected virtual void Awake()
     {
@@ -88,12 +90,16 @@ public class CharacterManager : MonoBehaviour
         else
         {
             attackDel = DefaultAttack;
-            attackEnd = AIStart;
+            attackEnd = DefaultEnd;
         }
     }
     void OnDisable()
     {
         StopAllCoroutines();
+    }
+    public void DefaultEnd()
+    {
+        Debug.Log("Um");
     }
     public void AIStart()
     {
@@ -145,7 +151,6 @@ public class CharacterManager : MonoBehaviour
         CanAttack = false;
         Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime - (int)MGStat.Timer * 0.5f));
         MGStat.Timer = 0;
-        AIStart();
     }
     public void DefaultAttack()
     {
@@ -160,10 +165,19 @@ public class CharacterManager : MonoBehaviour
     }
     IEnumerator StartMove()
     {
+        if (TryGetComponent(out Tower tower))
+        {
+            tower.PlayerOrder = false;
+            yield return null;
+            tower.PlayerOrder = true;
+        }
         if (MovePos.Count > 1)
         {
             if (AttackCoroutine != null)
+            {
                 StopCoroutine(AttackCoroutine);
+                Coru = false;
+            }
         }
         while (MovePos.Count > 0)
         {
@@ -175,7 +189,7 @@ public class CharacterManager : MonoBehaviour
             }
             MovePos.RemoveAt(0);
         }
-        if (TryGetComponent(out Tower tower))
+        if (tower != null)
         {
             tower.PlayerOrder = false;
         }
@@ -283,10 +297,38 @@ public class CharacterManager : MonoBehaviour
         OBJ.transform.position = transform.position;
         Bullet B = OBJ.GetComponent<Bullet>();
         B.Target = Target;
-        B.Attack = Attack;
         B.TargetOBJ = Target;
         B.AntiAmor = AntiAmor;
+        float Atk = Attack;
+        CharacterManager TargetCM = Target.transform.GetComponent<CharacterManager>();
+        if (TargetCM.type == Type.sniper)
+        {
+            if (type == Type.sniper)
+                CounterAttack(ref Atk);
+            else if (type == Type.search)
+                CounterAttack(ref Atk);
+        }
+        else if(TargetCM.type == Type.search)
+        {
+            if(type == Type.rifle)
+                CounterAttack(ref Atk);
+        }
+        else if (TargetCM.type == Type.rifle)
+        {
+            if (type == Type.tank)
+                CounterAttack(ref Atk);
+        }
+        else if (TargetCM.type == Type.tank)
+        {
+            if (type == Type.antiTank)
+                CounterAttack(ref Atk);
+        }
+        B.Attack = Mathf.RoundToInt(Atk);
         OBJ.SetActive(true);
+    }
+    void CounterAttack(ref float Attack)
+    {
+        Attack *= 1.1f;
     }
     GameObject ZeroPool()
     {

@@ -10,17 +10,30 @@ public class Tower : CharacterManager
     {
         AttackCoroutine = StartCoroutine(AttackThis(null));
         StopCoroutine(AttackCoroutine);
+        Coru = false;
         die += TowerDie;
     }
     void OnDisable()
     {
         StopAllCoroutines();
     }
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy") && !Coru && !PlayerOrder)
+        {
+            if (CheckWall(collision.gameObject))
+            {
+                TargetPos = collision.transform.position;
+                StopCoroutine(MoveCoroutine);
+                AIStart();
+            }
+        }
+    }
     void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy")  && Target == null && !PlayerOrder)
+        if (collision.CompareTag("Enemy")  && !Coru && !PlayerOrder)
         {
-            if(CheckWall(collision.gameObject))
+            if(CheckWall(collision.gameObject) && Vector2.Distance(collision.transform.position, transform.position) <= Sight)
             {
                 StopCoroutine(MoveCoroutine);
                 AttackCoroutine = StartCoroutine(AttackThis(collision.transform.gameObject));
@@ -29,11 +42,13 @@ public class Tower : CharacterManager
     }
     public void ThatAttack(GameObject Target)
     {
-        AttackCoroutine = StartCoroutine(AttackThis(Target));
+        if (Vector2.Distance(Target.transform.position, transform.position) <= Sight)
+            AttackCoroutine = StartCoroutine(AttackThis(Target));
     }
     IEnumerator AttackThis(GameObject OBJ)
     {
         Target = OBJ;
+        Coru = true;
         if (!CheckWall(Target))
         {
             Target = null;
@@ -41,13 +56,7 @@ public class Tower : CharacterManager
         while (Target != null)
         {
             Debug.Log(gameObject.name);
-            if (Vector2.Distance(Target.transform.position, transform.position) > Sight)
-            {
-                transform.position = Vector2.MoveTowards(transform.position, Target.transform.position, Speed * Time.deltaTime);
-                yield return null;
-                continue;
-            }
-            else if (CanAttack)
+            if (CanAttack)
             {
                 attackDel();
             }
@@ -58,8 +67,18 @@ public class Tower : CharacterManager
             yield return WaitForSeconds;
         }
         yield return null;
-        attackEnd();
+        RaycastHit2D hit2D = Physics2D.CircleCast(transform.position, Sight, transform.forward, 1, 1 << 7);
+        if(hit2D.collider != null)
+        {
+            if (CheckWall(hit2D.transform.gameObject))
+            {
+                TargetPos = hit2D.transform.position;
+                StopCoroutine(MoveCoroutine);
+            }
+        }
         AIStart();
+        attackEnd();
+        Coru = false;
     }
     public IEnumerator GoInBuilding(GameObject OBJ)
     {

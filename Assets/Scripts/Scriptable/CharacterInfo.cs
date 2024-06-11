@@ -12,8 +12,12 @@ public class Character
 {
     public string name;
     public int ID;
+    public bool unlock;
 
     public GameObject prefab;
+
+    public string role;
+    public int Level = 1;
     public HP hp;
     public Speed speed;
     public Attack attack;
@@ -24,6 +28,7 @@ public class Character
 [Serializable]
 public struct HP
 {
+    public float Basic;
     public int MaxLevel;
     public int Increase;
     public int Level;
@@ -31,6 +36,7 @@ public struct HP
 [Serializable]
 public struct Speed
 {
+    public float Basic;
     public int MaxLevel;
     public int Increase;
     public int Level;
@@ -38,6 +44,7 @@ public struct Speed
 [Serializable]
 public struct Attack
 {
+    public float Basic;
     public int MaxLevel;
     public int Increase;
     public int Level;
@@ -45,6 +52,7 @@ public struct Attack
 [Serializable]
 public struct AttackSpeed
 {
+    public float Basic;
     public int MaxLevel;
     public int Increase;
     public int Level;
@@ -52,6 +60,7 @@ public struct AttackSpeed
 [Serializable]
 public struct AntiAmor
 {
+    public float Basic;
     public int MaxLevel;
     public int Increase;
     public int Level;
@@ -59,6 +68,7 @@ public struct AntiAmor
 [Serializable]
 public struct Sight
 {
+    public float Basic;
     public int MaxLevel;
     public int Increase;
     public int Level;

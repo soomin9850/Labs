@@ -5,10 +5,13 @@ using UnityEngine.Tilemaps;
 
 public class Building : CharacterManager
 {
-    public float BuildingSize = 0;
+    public int BuildingSize = 0;
     SpriteRenderer SR;
+    [SerializeField] Sprite Destroyed;
     Color Half = new Color(1, 1, 1, 0.5f);
     [SerializeField] int MaxBarrier;
+    public bool BombReady;
+    public bool Trench;
     int Barrier
     {
         get
@@ -44,6 +47,7 @@ public class Building : CharacterManager
         AttackCoroutine = StartCoroutine(AttackThis(null));
         die += BuildingDie;
         StopCoroutine(AttackCoroutine);
+        Coru = false;
     }
     public void BarrierHit(int Atk)
     {
@@ -56,7 +60,7 @@ public class Building : CharacterManager
     }
     void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy") && Target == null && InPlayer)
+        if (collision.CompareTag("Enemy") && !Coru && InPlayer)
         {
             Building_CheckWall(collision.gameObject);
         }
@@ -79,11 +83,13 @@ public class Building : CharacterManager
     }
     public void ThatAttack(GameObject Target)
     {
-        AttackCoroutine = StartCoroutine(AttackThis(Target));
+        if (Vector2.Distance(Target.transform.position, transform.position) <= Sight)
+            AttackCoroutine = StartCoroutine(AttackThis(Target));
     }
     IEnumerator AttackThis(GameObject OBJ)
     {
         Target = OBJ;
+        Coru = true;
         if (!CheckWall(Target))
         {
             Target = null;
@@ -103,14 +109,13 @@ public class Building : CharacterManager
             yield return WaitForSeconds;
         }
         yield return null;
-        if (type == Type.machineGun)
+        RaycastHit2D hit2D = Physics2D.CircleCast(transform.position, Sight, transform.forward, 1, 1 << 7);
+        if (hit2D.collider != null)
         {
-            if (Wait != null)
-                StopCoroutine(Wait);
-            CanAttack = false;
-            Wait = StartCoroutine(AttackOn(MGStat.ReLoadTime - (int)MGStat.Timer * 0.5f));
-            MGStat.Timer = 0;
+            Target = hit2D.transform.gameObject;
         }
+        attackEnd();
+        Coru = false;
     }
     public void BuildingDie()
     {
@@ -120,8 +125,7 @@ public class Building : CharacterManager
             GameManager.Instance.OutBuilding(GetComponent<CharacterManager>(), character);
             character.die();
         }
-        this.enabled = false;
-        //GetComponent<SpriteRenderer>().sprite = ±×°Å;
-        NoDamage = true;
+        SR.sprite = Destroyed;
+        Destroy(this);
     }
 }

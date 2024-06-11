@@ -13,18 +13,20 @@ public class CharacterUI : MonoBehaviour
     [SerializeField] GameObject BuildingSet;
     BuildInfo info;
     [SerializeField] GameObject Stat;
+    [SerializeField] GameObject Icon;
     void Awake()
     {
+        Icon = GameObject.Find("CharIcon");
         GM = GameManager.Instance;
         mainCam = Camera.main;
-        for(int i=0;i<GM.Characterlist.characters.Length;i++)
+        for(int i=0;i<GM.CharacterForm.Length;i++)
         {
             Image image = GameObject.Find("List" + i.ToString()).transform.GetChild(0).GetComponent<Image>();
             image.color = new Color(1, 1, 1, 0);
-            if (GM.Characterlist.characters[i] != null)
+            if (GM.CharacterForm[i] != null)
             {
                 image.color = new Color(1, 1, 1, 1);
-                image.sprite = GM.Characterlist.characters[i].prefab.GetComponent<CharacterManager>().Icon;
+                image.sprite = GM.CharacterForm[i].GetComponent<CharacterManager>().Icon;
             }
         }
     }
@@ -62,7 +64,7 @@ public class CharacterUI : MonoBehaviour
             {
                 CharacterManager CM = GM.Character[Index].GetComponent<CharacterManager>();
                 Transform Char = Stat.transform;
-                Char.Find("Character").Find("CharacterStd").GetComponent<Image>().sprite = CM.Stdillust;
+                Char.Find("Character").Find("CharacterStd").GetComponent<Image>().sprite = CM.StatStdillust;
                 Char.Find("Character").Find("CharacterName").GetComponent<TextMeshProUGUI>().text = CM.CharacterName;
                 Transform StatText = Char.Find("Stat").Find("StatText");
                 //0 체력 / 1 이동속도 / 2 공격력 / 3 공격속도 / 4 장갑 관통 / 5 시야
@@ -102,14 +104,13 @@ public class CharacterUI : MonoBehaviour
     }
     public void SpawnCharacter()
     {
-        GameObject OBJ = Instantiate(GM.Characterlist.characters[info.Index].prefab, info.Building.position, Quaternion.identity);
+        GameObject OBJ = Instantiate(GM.CharacterForm[info.Index], info.Building.position, Quaternion.identity);
         GM.Character[info.Index] = OBJ;
         GM.InBuilding(info.Building.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
     }
     IEnumerator CharSpawn(int Index)
     {
-        GameObject Icon = GameObject.Find("CharIcon");
-        Icon.GetComponent<SpriteRenderer>().sprite = GM.Characterlist.characters[Index].prefab.GetComponent<CharacterManager>().Icon;
+        Icon.GetComponent<SpriteRenderer>().sprite = GM.CharacterForm[Index].GetComponent<CharacterManager>().Icon;
         while (true)
         {
             Vector2 MousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);

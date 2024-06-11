@@ -603,8 +603,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   CharacterName: Emily
-  Icon: {fileID: 3153507818212263266, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
-  Stdillust: {fileID: -5308045235413482435, guid: ebf2ec2a7fb71b44daa95e107967d74b, type: 3}
+  Icon: {fileID: 21300000, guid: f831294ac493f604cb5ab2290772780e, type: 2}
+  Stdillust: {fileID: 21300000, guid: 12bdece065889c64fb56ff6943a9b17f, type: 2}
+  StatStdillust: {fileID: 21300000, guid: 96aac720cc7d6c142bb44f1f88541d4d, type: 2}
   MaxHp: 90
   Bar: {fileID: 2662081552049381530}
   hp: 0
@@ -615,6 +616,7 @@ MonoBehaviour:
   Atk: 7
   Amor: 0
   AntiAmor: 20
+  CanAttack: 1
   Target: {fileID: 0}
   WallTileMap: {fileID: 0}
   BuildingTileMap: {fileID: 0}

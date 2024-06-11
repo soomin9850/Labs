@@ -21,7 +21,7 @@ public class Bullet : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject == TargetOBJ || collision.CompareTag("Building"))
+        if (collision.gameObject == TargetOBJ)
         {
             collision.GetComponent<CharacterManager>().Hit(Attack, AntiAmor);
             BulletPooling();

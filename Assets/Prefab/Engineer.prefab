@@ -401,6 +401,7 @@ GameObject:
   - component: {fileID: 4160690280658443837}
   - component: {fileID: 4489487817699804524}
   - component: {fileID: 1258478587511052158}
+  - component: {fileID: -3052873063600801962}
   m_Layer: 6
   m_Name: Engineer
   m_TagString: Player
@@ -554,8 +555,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   CharacterName: Engineer
-  Icon: {fileID: 3153507818212263266, guid: 7a1783ac824940c4a911614a8e708165, type: 3}
-  Stdillust: {fileID: -5308045235413482435, guid: ebf2ec2a7fb71b44daa95e107967d74b, type: 3}
+  Icon: {fileID: 21300000, guid: f831294ac493f604cb5ab2290772780e, type: 2}
+  Stdillust: {fileID: 21300000, guid: 12bdece065889c64fb56ff6943a9b17f, type: 2}
+  StatStdillust: {fileID: 21300000, guid: 96aac720cc7d6c142bb44f1f88541d4d, type: 2}
   MaxHp: 110
   Bar: {fileID: 6845028399629895686}
   hp: 0
@@ -566,6 +568,7 @@ MonoBehaviour:
   Atk: 6
   Amor: 0
   AntiAmor: 20
+  CanAttack: 1
   Target: {fileID: 0}
   WallTileMap: {fileID: 0}
   BuildingTileMap: {fileID: 0}
@@ -576,6 +579,18 @@ MonoBehaviour:
   TargetPos: {x: 0, y: 0}
   MGStat: {fileID: 0}
   PlayerOrder: 0
+--- !u!114 &-3052873063600801962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7514671381572143671}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 028bf3d1ee7223143bd2ede19cbd47fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7747183528099761289
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,109 +15,253 @@ MonoBehaviour:
   characters:
   - name: Sniper
     ID: 0
+    unlock: 1
     prefab: {fileID: 422639388636213329, guid: 08e263174c5ad374683ee90eb5f12e43, type: 3}
+    role: "\uC800\uACA9"
+    Level: 0
     hp:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     speed:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     attack:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     attackSpeed:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     antiAmor:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     sight:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
   - name: Emliy
     ID: 1
+    unlock: 1
     prefab: {fileID: 3261115973280036088, guid: f0087e749af6bf14aa15796742650f73, type: 3}
+    role: "\uC218\uC0C9"
+    Level: 0
     hp:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     speed:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     attack:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     attackSpeed:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     antiAmor:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     sight:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
   - name: MG
     ID: 2
+    unlock: 1
     prefab: {fileID: 1617954432990127385, guid: 29270aebc79bdf445a250103c685a8e1, type: 3}
+    role: "\uAE30\uAD00\uCD1D"
+    Level: 0
     hp:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     speed:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     attack:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     attackSpeed:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     antiAmor:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     sight:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
   - name: Engineer
     ID: 3
+    unlock: 1
     prefab: {fileID: 7514671381572143671, guid: 28f237f7314c6cf4482805f07175a394, type: 3}
+    role: "\uACF5\uBCD1"
+    Level: 0
     hp:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     speed:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     attack:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     attackSpeed:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     antiAmor:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0
     sight:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+  - name: Engineer
+    ID: 3
+    unlock: 0
+    prefab: {fileID: 7514671381572143671, guid: 28f237f7314c6cf4482805f07175a394, type: 3}
+    role: "\uACF5\uBCD1"
+    Level: 0
+    hp:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    speed:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    attack:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    attackSpeed:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    antiAmor:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    sight:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+  - name: Engineer
+    ID: 3
+    unlock: 0
+    prefab: {fileID: 7514671381572143671, guid: 28f237f7314c6cf4482805f07175a394, type: 3}
+    role: "\uACF5\uBCD1"
+    Level: 0
+    hp:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    speed:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    attack:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    attackSpeed:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    antiAmor:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    sight:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+  - name: Engineer
+    ID: 3
+    unlock: 0
+    prefab: {fileID: 7514671381572143671, guid: 28f237f7314c6cf4482805f07175a394, type: 3}
+    role: "\uACF5\uBCD1"
+    Level: 0
+    hp:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    speed:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    attack:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    attackSpeed:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    antiAmor:
+      Basic: 0
+      MaxLevel: 0
+      Increase: 0
+      Level: 0
+    sight:
+      Basic: 0
       MaxLevel: 0
       Increase: 0
       Level: 0

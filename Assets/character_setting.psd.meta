@@ -183,17 +183,17 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 762, y: 3400}
     spritePosition: {x: 115, y: 366}
-  - name: "\uCE90\uB9AD\uD130 \uC55E \uD2C0"
+  - name: "\uCE90\uB9AD\uD130 \uC55E \uD2C0(\uCE90\uB9AD\uD130 \uC788\uC74C)"
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 4
-      y: 2180
-      width: 1835
-      height: 726
+      x: 6
+      y: 2192
+      width: 500
+      height: 710
     spriteID: 020ffe0dcf7ab624282097433cc63201
     spriteBone: []
     spriteOutline: []
@@ -485,9 +485,9 @@ ScriptedImporter:
     rect:
       serializedVersion: 2
       x: 1546
-      y: 3157
-      width: 220
-      height: 223
+      y: 3172
+      width: 207
+      height: 202
     spriteID: f472d4425e06c3145a3bbec3bdc8e67c
     spriteBone: []
     spriteOutline: []
@@ -644,6 +644,48 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 4, y: 1092}
+    spritePosition: {x: 0, y: 0}
+  - name: "\uCE90\uB9AD\uD130 \uC55E \uD2C0"
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 681
+      y: 2192
+      width: 500
+      height: 710
+    spriteID: c70f8d5ec60577647851dc01ae311d40
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 681, y: 2192}
+    spritePosition: {x: 0, y: 0}
+  - name: character_setting_0
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 2176
+      width: 1844
+      height: 13
+    spriteID: 47826364a3366e2489d0effd9dd06818
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 2176}
     spritePosition: {x: 0, y: 0}
   characterData:
     bones: []

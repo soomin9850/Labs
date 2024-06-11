@@ -20,30 +20,55 @@ public class Player : MonoBehaviour
     public List<GameObject> SelectCharacter = new List<GameObject>();
     public List<GameObject> SelectBuilding = new List<GameObject>();
 
-    [SerializeField] GameObject Home;
+    public GameObject Home;
 
     [SerializeField] GameObject Dialogue;
 
     public int MineCount;
+    public int MineMaxCount;
     public GameObject TankMine;
     public GameObject HumanMine;
 
+    public int TrenchMaxCount;
     public int TrenchCount;
-    public int Trench;
+    public GameObject Trench;
+
+    public int BombCount;
+    public int BombMaxCount;
+    public GameObject Bomb;
+
+    SpriteRenderer BombRenderer;
+
+    GameManager GM;
+
+    public Stage Stage;
     void Awake()
     {
+        GM = GameManager.Instance;
         mainCam = Camera.main;
-        GameManager.Instance.WallTile = GameObject.Find("Wall").GetComponent<Tilemap>();
-        GameManager.Instance.PathFindTile = GameObject.Find("PathFindingWall").GetComponent<Tilemap>();
-        //GameManager.Instance.BuildingTile.color = new Color(0, 0, 0, 0);
-        GameManager.Instance.player = this;
+        GM.WallTile = GameObject.Find("Wall").GetComponent<Tilemap>();
+        GM.PathFindTile = GameObject.Find("PathFindingWall").GetComponent<Tilemap>();
+        //GM.BuildingTile.color = new Color(0, 0, 0, 0);
+        GM.player = this;
         Shadow.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 1);
     }
     void Start()
     {
-        GameObject OBJ = Instantiate(GameManager.Instance.Characterlist.characters[0].prefab, Home.transform.position, Quaternion.identity);
-        GameManager.Instance.Character[0] = OBJ;
-        GameManager.Instance.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
+        GameObject Temp = null;
+        int TempIndex = 0;
+        for (int i = 0; i < GM.CharacterForm.Length; i++)
+        {
+            if (GM.CharacterForm[i] == null)
+                continue;
+            if (GM.CharacterForm[i].GetComponent<CharacterManager>().CharacterName == "Sniper")
+            {
+                TempIndex = i;
+                Temp = GM.CharacterForm[i];
+            }
+        }
+        GameObject OBJ = Instantiate(Temp, Home.transform.position, Quaternion.identity);
+        GM.Character[TempIndex] = OBJ;
+        GM.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
         //Dialogue.SetActive(true);
     }
     void Update()
@@ -53,10 +78,33 @@ public class Player : MonoBehaviour
         CameraMove();
         BuildingEnteraction();
         Enteraction();
+        BombClick();
+    }
+    void BombClick()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit2D hit = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 15);
+            if (hit.collider != null)
+            {
+                BombRenderer = hit.transform.GetComponent<SpriteRenderer>();
+                BombRenderer.color = Color.red - new Color(0, 0, 0, 0.5f);
+            }
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            if(BombRenderer != null)
+                BombRenderer.color = Color.red;
+            RaycastHit2D hit = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 15);
+            if(hit.collider != null)
+            {
+                hit.transform.GetComponent<Bomb>().Click();
+            }
+        }
     }
     void Enteraction()
     {
-        if(Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E))
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
@@ -89,6 +137,21 @@ public class Player : MonoBehaviour
                 }
             }
         }
+        else if (Input.GetKey(KeyCode.X) && Input.GetMouseButtonDown(1) && BombCount < BombMaxCount)
+        {
+            for (int i = 0; i < SelectCharacter.Count; i++)
+            {
+                if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.engineer)
+                {
+                    RaycastHit2D hit = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 9);
+                    if (hit.collider != null)
+                    {
+                        SelectCharacter[i].GetComponent<EngineerScript>().MakeBomb(hit.transform.gameObject);
+                        return;
+                    }
+                }
+            }
+        }
     }
     void BuildingEnteraction()
     {
@@ -98,7 +161,7 @@ public class Player : MonoBehaviour
             {
                 Building CM = SelectBuilding[i].GetComponent<Building>();
                 if (CM.InPlayer)
-                    GameManager.Instance.OutBuilding(CM, CM.transform.GetChild(CM.transform.childCount - 1).transform.GetComponent<CharacterManager>());
+                    GM.OutBuilding(CM, CM.transform.GetChild(CM.transform.childCount - 1).transform.GetComponent<CharacterManager>());
             }
         }
         else if (Input.GetKey(KeyCode.I) && Input.GetMouseButtonDown(1))
@@ -153,7 +216,6 @@ public class Player : MonoBehaviour
                 tower.StopCoroutine(tower.AttackCoroutine);
                 tower.StopCoroutine(tower.MoveCoroutine);
                 tower.TargetPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-                SelectCharacter[i].transform.GetComponent<Tower>().PlayerOrder = true;
                 tower.Target = null;
                 tower.AIStart();
             }

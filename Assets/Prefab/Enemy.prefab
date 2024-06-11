@@ -551,16 +551,19 @@ MonoBehaviour:
   type: 1
   CharacterName: 
   Icon: {fileID: 0}
+  Stdillust: {fileID: 0}
+  StatStdillust: {fileID: 0}
   MaxHp: 40
   Bar: {fileID: 621024697822754861}
   hp: 0
   Bullet: {fileID: 8563610023952873694, guid: 54e75c114cf20be4bb466108950dbecd, type: 3}
-  Sight: 3.5
+  Sight: 4
   Speed: 7
   AttackSpeed: 0.2
   Atk: 6
   Amor: 0
   AntiAmor: 0
+  CanAttack: 1
   Target: {fileID: 0}
   WallTileMap: {fileID: 0}
   BuildingTileMap: {fileID: 0}
@@ -568,9 +571,5 @@ MonoBehaviour:
   ClosePos: []
   MovePos: []
   Value: []
-  Another: []
   TargetPos: {x: -2, y: 0}
-  MGStat:
-    ReLoadTime: 0
-    ShootTime: 0
-    Timer: 0
+  MGStat: {fileID: 0}

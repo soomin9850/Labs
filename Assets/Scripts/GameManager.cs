@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     public CharacterInfo Characterlist;
     public GameObject[] Character = new GameObject[5];
+    public GameObject[] CharacterForm = new GameObject[5];
 
     public float[] Sound = { 1, 1, 1 }; //0 : 전체, 1 : 배경, 2 : 캐릭터
 
@@ -26,6 +27,8 @@ public class GameManager : MonoBehaviour
 
     public int[] TargetFrame;
     public int TargetFrameIndex = 1;
+
+    public float[] BuildingSight;
     void Awake()
     {
         Instance = this;
@@ -49,7 +52,7 @@ public class GameManager : MonoBehaviour
         Building.MaxHp = Character.MaxHp;
         Building.HP = Character.HP;
         Building.Icon = Character.Icon;
-        Building.Sight = Character.Sight;
+        Building.Sight = Character.Sight * BuildingSight[B.BuildingSize];
         Building.Speed = Character.Speed;
         Building.AttackSpeed = Character.AttackSpeed;
         Building.Atk = Character.Atk;
@@ -57,7 +60,7 @@ public class GameManager : MonoBehaviour
         Building.transform.tag = "Player";
         Building.AntiAmor = Character.AntiAmor;
         Transform Child = Building.transform.GetChild(Building.transform.childCount - 1);
-        float S = Building.Sight * B.BuildingSize * 2;
+        float S = Building.Sight * 2f;
         Child.parent = null;
         Child.localScale = new Vector3(S, S, S);
         Child.parent = Building.transform;

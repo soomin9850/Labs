@@ -11,9 +11,11 @@ public class Enemy : CharacterManager
         AttackCoroutine = StartCoroutine(AttackThis(null));
         die += EnemyDie;
         StopCoroutine(AttackCoroutine);
-        Invoke("WaitStart", 10);
+        Coru = false;
+        //Invoke("WaitStart", 10);
+        AIStart();
     }
-    void WaitStart()
+    public void WaitStart()
     {
         AIStart();
     }
@@ -21,11 +23,23 @@ public class Enemy : CharacterManager
     {
         StopAllCoroutines();
     }
-    void OnTriggerStay2D(Collider2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player")  && Target == null)
+        if (collision.CompareTag("Player") && !Coru)
         {
             if (CheckWall(collision.gameObject))
+            {
+                TargetPos = collision.transform.position;
+                StopCoroutine(MoveCoroutine);
+                AIStart();
+            }
+        }
+    }
+    void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player")  && !Coru)
+        {
+            if (CheckWall(collision.gameObject) && Vector2.Distance(collision.transform.position, transform.position) <= Sight)
             {
                 StopCoroutine(MoveCoroutine);
                 AttackCoroutine = StartCoroutine(AttackThis(collision.transform.gameObject));
@@ -36,18 +50,13 @@ public class Enemy : CharacterManager
     IEnumerator AttackThis(GameObject OBJ)
     {
         Target = OBJ;
+        Coru = true;
         while (Target != null && Target.activeSelf)
         {
-            if (Target.CompareTag("Building") && !Target.transform.GetComponent<Building>().InPlayer)
+            if (Target.CompareTag("Building") || !Target.transform.GetComponent<Building>().InPlayer)
             {
                 Target = null;
                 break;
-            }
-            if (Vector2.Distance(Target.transform.position, transform.position) > Sight)
-            {
-                transform.position = Vector2.MoveTowards(transform.position, Target.transform.position, Speed * Time.deltaTime);
-                yield return null;
-                continue;
             }
             else if (CanAttack)
             {
@@ -61,11 +70,23 @@ public class Enemy : CharacterManager
         }
         Target = null;
         yield return null;
-        attackEnd();
+        TargetPos = GameManager.Instance.player.Home.transform.position;
+        RaycastHit2D hit2D = Physics2D.CircleCast(transform.position, Sight, transform.forward, 1, 1 << 6);
+        if (hit2D.collider != null)
+        {
+            if (CheckWall(hit2D.transform.gameObject))
+            {
+                TargetPos = hit2D.transform.position;
+                StopCoroutine(MoveCoroutine);
+            }
+        }
         AIStart();
+        attackEnd();
+        Coru = false;
     }
     public void EnemyDie()
     {
+        GM.player.Stage.EnemyCount--;
         Destroy(gameObject);
     }
 }
