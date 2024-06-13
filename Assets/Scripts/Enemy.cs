@@ -7,7 +7,7 @@ public class Enemy : CharacterManager
     void Start()
     {
         WallTileMap = GM.WallTile;
-        BuildingTileMap = GM.PathFindTile;
+        PathFindTileMap = GM.PathFindTile;
         AttackCoroutine = StartCoroutine(AttackThis(null));
         die += EnemyDie;
         StopCoroutine(AttackCoroutine);
@@ -27,8 +27,9 @@ public class Enemy : CharacterManager
     {
         if (collision.CompareTag("Player") && !Coru)
         {
-            if (CheckWall(collision.gameObject))
+            if (CheckWall(collision.gameObject) && !goingthere)
             {
+                goingthere = true;
                 TargetPos = collision.transform.position;
                 StopCoroutine(MoveCoroutine);
                 AIStart();
@@ -53,7 +54,7 @@ public class Enemy : CharacterManager
         Coru = true;
         while (Target != null && Target.activeSelf)
         {
-            if (Target.CompareTag("Building") || !Target.transform.GetComponent<Building>().InPlayer)
+            if (Target.CompareTag("Building") || (Target.transform.TryGetComponent(out Building building) && !building.InPlayer))
             {
                 Target = null;
                 break;
@@ -80,13 +81,12 @@ public class Enemy : CharacterManager
                 StopCoroutine(MoveCoroutine);
             }
         }
+        Coru = false;
         AIStart();
         attackEnd();
-        Coru = false;
     }
     public void EnemyDie()
     {
-        GM.player.Stage.EnemyCount--;
         Destroy(gameObject);
     }
 }

@@ -30,17 +30,17 @@ public class Mine : MonoBehaviour
             onTrigger(collision.gameObject);
         }
     }
-    void Tank(GameObject gameObject)
+    void Tank(GameObject OBJ)
     {
-        if (gameObject.TryGetComponent(out CharacterManager CM) && CM.type == CharacterManager.Type.tank)
+        if (OBJ.TryGetComponent(out CharacterManager CM) && CM.type == CharacterManager.Type.tank)
         {
             CM.HP -= 70;
             Destroy(gameObject);
         }
     }
-    void Person(GameObject gameObject)
+    void Person(GameObject OBJ)
     {
-        if (gameObject.TryGetComponent(out CharacterManager CM))
+        if (OBJ.TryGetComponent(out CharacterManager CM))
         {
             if (CM.type == CharacterManager.Type.tank)
             {

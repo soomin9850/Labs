@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1881392646137271359}
   - component: {fileID: 8475226893123350160}
   - component: {fileID: 6446673576652387019}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: AntiPersonMine
   m_TagString: Untagged
   m_Icon: {fileID: 0}

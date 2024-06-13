@@ -21,8 +21,9 @@ public class Tower : CharacterManager
     {
         if (collision.CompareTag("Enemy") && !Coru && !PlayerOrder)
         {
-            if (CheckWall(collision.gameObject))
+            if (CheckWall(collision.gameObject) && !goingthere)
             {
+                goingthere = true;
                 TargetPos = collision.transform.position;
                 StopCoroutine(MoveCoroutine);
                 AIStart();
@@ -76,9 +77,9 @@ public class Tower : CharacterManager
                 StopCoroutine(MoveCoroutine);
             }
         }
+        Coru = false;
         AIStart();
         attackEnd();
-        Coru = false;
     }
     public IEnumerator GoInBuilding(GameObject OBJ)
     {
@@ -96,5 +97,6 @@ public class Tower : CharacterManager
     public void TowerDie()
     {
         gameObject.SetActive(false);
+        GameManager.Instance.player.LoseTrigger.Remove(gameObject);
     }
 }

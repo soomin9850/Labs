@@ -10,6 +10,7 @@ public class Car : MonoBehaviour
     [SerializeField] Tilemap PathFindTile;
     [SerializeField] Tilemap WallTile;
     [SerializeField] TileBase TileBase;
+    [SerializeField] int Rz = 0;
     public int MaxHP;
     public int HP;
     public bool isMove;
@@ -52,11 +53,8 @@ public class Car : MonoBehaviour
         {
             for (int y = 0; y < Height; y++)
             {
-                Vector3Int vector3 = new Vector3Int(Mathf.RoundToInt(Target.x) + x, Mathf.RoundToInt(Target.y) + y);
-                if (PathFindTile.GetTile(vector3) != null || WallTile.GetTile(vector3) != null)
+                if (PathFindTile.GetTile(Position(x, y)) != null || WallTile.GetTile(Position(x, y)) != null)
                     CanMove = false;
-                //Debug.Log(PathFindTile.GetTile(vector3));
-                //Debug.Log(WallTile.GetTile(vector3));
             }
         }
         if(CanMove)
@@ -78,8 +76,7 @@ public class Car : MonoBehaviour
         {
             for (int y = 0; y < Height; y++)
             {
-                Vector3Int vector3 = new Vector3Int(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) + y);
-                PathFindTile.SetTile(vector3, TileBase);
+                PathFindTile.SetTile(Position(x, y), TileBase);
             }
         }
     }
@@ -89,9 +86,19 @@ public class Car : MonoBehaviour
         {
             for (int y = 0; y < Height; y++)
             {
-                Vector3Int vector3 = new Vector3Int(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) + y);
-                PathFindTile.SetTile(vector3, null);
+                PathFindTile.SetTile(Position(x, y), null);
             }
         }
+    }
+    Vector3Int Position(int x, int y)
+    {
+        Vector3Int vector3;
+        if ((Rz == -45f || Rz == 135f) && x == 1)
+            vector3 = new Vector3Int(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) + 1);
+        else if ((Rz == 45f || Rz == -135f) && x == 1)
+            vector3 = new Vector3Int(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) - 1);
+        else
+            vector3 = new Vector3Int(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) + y);
+        return vector3;
     }
 }

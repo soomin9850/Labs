@@ -23,8 +23,9 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject == TargetOBJ)
         {
-            collision.GetComponent<CharacterManager>().Hit(Attack, AntiAmor);
             BulletPooling();
+            if (collision.transform.TryGetComponent(out CharacterManager characterManager))
+                characterManager.Hit(Attack, AntiAmor);
         }
     }
     void ZeroPool(GameObject bullet)

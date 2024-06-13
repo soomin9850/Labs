@@ -13,6 +13,17 @@ public class StageSelect : MonoBehaviour
     [SerializeField] TextMeshProUGUI StageInfo;
     [SerializeField] Image StageImage;
     Vector2 MousePos;
+    void OnEnable()
+    {
+        for(int i = 0; i < StageIcon.Length; i++)
+        {
+            StageIcon[i].transform.parent.GetComponent<Button>().interactable = true;
+        }
+        for (int i = GameManager.Instance.Stage + 1; i < StageIcon.Length; i++)
+        {
+            StageIcon[i].transform.parent.GetComponent<Button>().interactable = false;
+        }
+    }
     public void Stage(string name)
     {
         StageName = name;

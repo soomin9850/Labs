@@ -157,11 +157,11 @@ MonoBehaviour:
       MaxLevel: 0
       Increase: 0
       Level: 0
-  - name: Engineer
-    ID: 3
-    unlock: 0
-    prefab: {fileID: 7514671381572143671, guid: 28f237f7314c6cf4482805f07175a394, type: 3}
-    role: "\uACF5\uBCD1"
+  - name: Rifle
+    ID: 4
+    unlock: 1
+    prefab: {fileID: 3968405820689845489, guid: c30fcdb90163684479ce5c5e4e546882, type: 3}
+    role: "\uC18C\uCD1D"
     Level: 0
     hp:
       Basic: 0

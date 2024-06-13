@@ -450,6 +450,7 @@ GameObject:
   - component: {fileID: 7701120145621281364}
   - component: {fileID: 591421935707040214}
   - component: {fileID: 5794633880833676874}
+  - component: {fileID: 5591557829023595709}
   m_Layer: 6
   m_Name: Emily
   m_TagString: Player
@@ -610,7 +611,7 @@ MonoBehaviour:
   Bar: {fileID: 2662081552049381530}
   hp: 0
   Bullet: {fileID: 8563610023952873694, guid: 54e75c114cf20be4bb466108950dbecd, type: 3}
-  Sight: 5
+  Sight: 7
   Speed: 7
   AttackSpeed: 0.2
   Atk: 7
@@ -627,6 +628,18 @@ MonoBehaviour:
   TargetPos: {x: 0, y: 0}
   MGStat: {fileID: 0}
   PlayerOrder: 0
+--- !u!114 &5591557829023595709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261115973280036088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98e85cd3cde50f44bb820ca74a957ec4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3816040702174319762
 GameObject:
   m_ObjectHideFlags: 0

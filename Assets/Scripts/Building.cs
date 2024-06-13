@@ -44,6 +44,17 @@ public class Building : CharacterManager
     }
     void Start()
     {
+        if (Trench)
+        {
+            for (int x = 0; x < 2; x++)
+            {
+                for (int y = 0; y < 1; y++)
+                {
+                    Vector3Int vector3 = new Vector3Int(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) + y);
+                    PathFindTileMap.SetTile(vector3, GameManager.Instance.TileBase);
+                }
+            }
+        }
         AttackCoroutine = StartCoroutine(AttackThis(null));
         die += BuildingDie;
         StopCoroutine(AttackCoroutine);

@@ -107,6 +107,7 @@ public class CharacterUI : MonoBehaviour
         GameObject OBJ = Instantiate(GM.CharacterForm[info.Index], info.Building.position, Quaternion.identity);
         GM.Character[info.Index] = OBJ;
         GM.InBuilding(info.Building.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
+        GM.player.LoseTrigger.Add(OBJ);
     }
     IEnumerator CharSpawn(int Index)
     {

@@ -34,6 +34,7 @@ public class Dialogue : MonoBehaviour
     int ChoiceNum;
     void OnEnable()
     {
+        ChoiceNum = 0;
         Time.timeScale = 0;
         StartCoroutine(StartDialLogue());
     }
@@ -74,7 +75,8 @@ public class Dialogue : MonoBehaviour
                 for (int j = 0; j < dialogues[i].branchCount; j++)
                 {
                     branchButtonText[j].transform.parent.gameObject.SetActive(true);
-                    branchButtonText[j].text = dialogues[i].ChoiceText[j];
+                    string BText = dialogues[i].ChoiceText[j].Replace("\\n", "\n");
+                    branchButtonText[j].text = BText;
                 }
                 yield return new WaitUntil(() => ChoiceNum != 0);
                 if (dialogues[i].Swap)

@@ -5,11 +5,12 @@ using TMPro;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
-    Camera mainCam;
+    [SerializeField] Camera mainCam;
     Vector2 BeforePos;
     Vector2 AfterPos;
     Vector2 Center;
@@ -20,9 +21,10 @@ public class Player : MonoBehaviour
     public List<GameObject> SelectCharacter = new List<GameObject>();
     public List<GameObject> SelectBuilding = new List<GameObject>();
 
-    public GameObject Home;
+    public GameObject Timerprefab;
+    public Queue<GameObject> TimerPool = new Queue<GameObject>();
 
-    [SerializeField] GameObject Dialogue;
+    public GameObject Home;
 
     public int MineCount;
     public int MineMaxCount;
@@ -42,6 +44,8 @@ public class Player : MonoBehaviour
     GameManager GM;
 
     public Stage Stage;
+
+    public List<GameObject> LoseTrigger;
     void Awake()
     {
         GM = GameManager.Instance;
@@ -69,16 +73,24 @@ public class Player : MonoBehaviour
         GameObject OBJ = Instantiate(Temp, Home.transform.position, Quaternion.identity);
         GM.Character[TempIndex] = OBJ;
         GM.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
-        //Dialogue.SetActive(true);
+        LoseTrigger.Add(OBJ);
     }
     void Update()
     {
+        CameraMove();
         SelectMouse();
         MoveMouse();
-        CameraMove();
         BuildingEnteraction();
         Enteraction();
         BombClick();
+        GameLose();
+    }
+    void GameLose()
+    {
+        if (LoseTrigger.Count <= 0 || !Home.TryGetComponent(out Building building))
+        {
+            SceneManager.LoadScene("Main");
+        }
     }
     void BombClick()
     {
@@ -108,7 +120,8 @@ public class Player : MonoBehaviour
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
-                if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.engineer)
+                CharacterManager CM = SelectCharacter[i].GetComponent<CharacterManager>();
+                if (CM.type == CharacterManager.Type.engineer || CM.type == CharacterManager.Type.rifle)
                 {
                     RaycastHit2D[] hits = Physics2D.CircleCastAll(SelectCharacter[i].transform.position, 1, transform.forward, 1, 1 << 0);
                     for (int j = 0; j < hits.Length; j++)
@@ -137,18 +150,55 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetKey(KeyCode.X) && Input.GetMouseButtonDown(1) && BombCount < BombMaxCount)
+        else if (Input.GetKey(KeyCode.X) && Input.GetMouseButtonDown(1) && BombCount < BombMaxCount) //°Ç¹°ÆøÆÄ
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
                 if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.engineer)
                 {
                     RaycastHit2D hit = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 9);
+                    RaycastHit2D hit1 = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 0);
+                    if (hit1.collider != null && hit1.transform.CompareTag("Bridge"))
+                    {
+                        SelectCharacter[i].GetComponent<EngineerScript>().MakeBomb(hit1.transform.gameObject);
+                        return;
+                    }
                     if (hit.collider != null)
                     {
                         SelectCharacter[i].GetComponent<EngineerScript>().MakeBomb(hit.transform.gameObject);
                         return;
                     }
+                }
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.Z) && TrenchCount < TrenchMaxCount) // ÂüÈ£
+        {
+            for (int i = 0; i < SelectCharacter.Count; i++)
+            {
+                if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.engineer)
+                {
+                    SelectCharacter[i].GetComponent<EngineerScript>().MakeTrench();
+                    return;
+                }
+            }
+        }
+        else if(Input.GetKeyDown(KeyCode.C) && MineCount < MineMaxCount) //´ëÀÎ¿ëÁö·Ú
+        {
+            for (int i = 0; i < SelectCharacter.Count; i++)
+            {
+                if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.search)
+                {
+                    SelectCharacter[i].GetComponent<SearchScript>().MakeMine(HumanMine);
+                }
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.V) && MineCount < MineMaxCount) //´ëÀüÂ÷Áö·Ú
+        {
+            for (int i = 0; i < SelectCharacter.Count; i++)
+            {
+                if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.search)
+                {
+                    SelectCharacter[i].GetComponent<SearchScript>().MakeMine(TankMine);
                 }
             }
         }
@@ -194,6 +244,8 @@ public class Player : MonoBehaviour
             {
                 for (int i = 0; i < SelectCharacter.Count; i++)
                 {
+                    if (!SelectCharacter[i].activeSelf)
+                        continue;
                     Tower tower = SelectCharacter[i].GetComponent<Tower>();
                     tower.TargetPos = mainCam.ScreenToWorldPoint(Input.mousePosition);
                     tower.Target = hit.transform.gameObject;
@@ -203,6 +255,8 @@ public class Player : MonoBehaviour
                 }
                 for (int i = 0; i < SelectBuilding.Count; i++)
                 {
+                    if (!SelectBuilding[i].activeSelf)
+                        continue;
                     Building building = SelectBuilding[i].GetComponent<Building>();
                     building.Target = hit.transform.gameObject;
                     building.StopCoroutine(building.AttackCoroutine);
@@ -212,6 +266,8 @@ public class Player : MonoBehaviour
             }
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
+                if (!SelectCharacter[i].activeSelf)
+                    continue;
                 CharacterManager tower = SelectCharacter[i].GetComponent<Tower>();
                 tower.StopCoroutine(tower.AttackCoroutine);
                 tower.StopCoroutine(tower.MoveCoroutine);
@@ -241,8 +297,6 @@ public class Player : MonoBehaviour
         }
         if (Input.GetMouseButtonUp(0))
         {
-            SelectCharacter.Clear();
-            SelectBuilding.Clear();
             CharacterSelect(Center, Size);
             Drag.SetActive(false);
         }
@@ -254,6 +308,8 @@ public class Player : MonoBehaviour
         {
             SelectCharacter[i].transform.GetComponent<SpriteRenderer>().color = Color.white;
         }
+        SelectCharacter.Clear();
+        SelectBuilding.Clear();
         if (hits.Length > 0)
         {
             for(int i = 0; i < hits.Length; i++)

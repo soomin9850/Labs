@@ -100,5 +100,6 @@ public class CharacterForming : MonoBehaviour
         {
             CharacterStd[i] = Standing.transform.GetChild(i);
         }
+        GM.CharacterForm = new GameObject[5];
     }
 }

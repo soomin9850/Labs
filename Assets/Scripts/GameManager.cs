@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public CharacterInfo Characterlist;
     public GameObject[] Character = new GameObject[5];
     public GameObject[] CharacterForm = new GameObject[5];
+    public TileBase TileBase;
 
     public float[] Sound = { 1, 1, 1 }; //0 : 전체, 1 : 배경, 2 : 캐릭터
 
@@ -29,6 +30,8 @@ public class GameManager : MonoBehaviour
     public int TargetFrameIndex = 1;
 
     public float[] BuildingSight;
+
+    public int Stage = 0;
     void Awake()
     {
         Instance = this;

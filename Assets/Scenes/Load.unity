@@ -183,6 +183,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  TileBase: {fileID: 11400000, guid: 98753abec43329649b70ee169ad9385e, type: 2}
   Sound:
   - 1
   - 1
@@ -197,6 +198,7 @@ MonoBehaviour:
   - 1.5
   - 2
   - 0.8
+  Stage: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
