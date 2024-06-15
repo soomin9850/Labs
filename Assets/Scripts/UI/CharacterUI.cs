@@ -120,7 +120,7 @@ public class CharacterUI : MonoBehaviour
             {
                 RaycastHit2D hit = Physics2D.Raycast(MousePos, Vector3.forward, 1, 1 << 9);
                 RaycastHit2D hit1 = Physics2D.Raycast(MousePos, Vector3.forward, 1, 1 << 12); // 시야 체크
-                if (hit.collider != null && hit1.collider != null)
+                if (hit.collider != null && hit1.collider != null && !hit.transform.GetComponent<Building>().InPlayer)
                 {
                     BuildingSet.SetActive(true);
                     info = new BuildInfo();

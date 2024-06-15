@@ -2,12 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
+[System.Serializable]
+public class Node
+{
+    public Vector2 Pos;
+    public Node P;
+    public float G;
+    public float H;
+    public float F
+    {
+        get { return G + H; }
+    }
+}
 public class Player : MonoBehaviour
 {
     [SerializeField] Camera mainCam;
@@ -45,7 +55,19 @@ public class Player : MonoBehaviour
 
     public Stage Stage;
 
+    public GameObject AIErrorText;
+    public Coroutine AIErrorCoroutine;
+    public Dictionary<Vector2, Node> CustomTileData = new Dictionary<Vector2, Node>();
+    public List<Node> NodeList = new List<Node>();
+
+
+    WaitForSeconds WaitForSeconds = new WaitForSeconds(1);
+
     public List<GameObject> LoseTrigger;
+    public float CameraMinX;
+    public float CameraMinY;
+    public float CameraMaxX;
+    public float CameraMaxY;
     void Awake()
     {
         GM = GameManager.Instance;
@@ -55,6 +77,21 @@ public class Player : MonoBehaviour
         //GM.BuildingTile.color = new Color(0, 0, 0, 0);
         GM.player = this;
         Shadow.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 1);
+        foreach (Vector3Int pos in GM.PathFindTile.cellBounds.allPositionsWithin)
+        {
+            Vector2 vector2 = GM.PathFindTile.CellToWorld(pos);
+            vector2 -= new Vector2(0.5f, 0.5f);
+            Node N = new Node();
+            N.Pos = vector2;
+            CustomTileData[vector2] = N;
+            NodeList.Add(N);
+        }
+    }
+    public IEnumerator AIError()
+    {
+        AIErrorText.SetActive(true);
+        yield return WaitForSeconds;
+        AIErrorText.SetActive(false);
     }
     void Start()
     {
@@ -163,7 +200,7 @@ public class Player : MonoBehaviour
                         SelectCharacter[i].GetComponent<EngineerScript>().MakeBomb(hit1.transform.gameObject);
                         return;
                     }
-                    if (hit.collider != null)
+                    else if (hit.collider != null && !hit.transform.GetComponent<Building>().Trench)
                     {
                         SelectCharacter[i].GetComponent<EngineerScript>().MakeBomb(hit.transform.gameObject);
                         return;
@@ -234,6 +271,22 @@ public class Player : MonoBehaviour
         float Y = Input.GetAxis("Vertical");
         mainCam.transform.position += new Vector3(X * Time.deltaTime * 5, Y * Time.deltaTime * 5, 0);
         mainCam.orthographicSize -= scroll * 2;
+
+        if (mainCam.orthographicSize < 5)
+            mainCam.orthographicSize = 5;
+        else if (mainCam.orthographicSize > 15)
+            mainCam.orthographicSize = 15;
+        float XPos = mainCam.transform.position.x;
+        float YPos = mainCam.transform.position.y;
+        if (XPos > CameraMaxX)
+            XPos = CameraMaxX;
+        else if (XPos < CameraMinX)
+            XPos = CameraMinX;
+        if (YPos > CameraMaxY)
+            YPos = CameraMaxY;
+        else if (YPos < CameraMinY)
+            YPos = CameraMinY;
+        mainCam.transform.position = new Vector3(XPos, YPos);
     }
     void MoveMouse()
     {

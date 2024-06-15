@@ -29,10 +29,15 @@ public class CharacterManager : MonoBehaviour
         }
         set
         {
+            if (value > MaxHp)
+                value = MaxHp;
+            if (value <= 0)
+            {
+                value = 0;
+                die();
+            }
             hp = value;
             HpBar.transform.localScale = new Vector2(BarValue(MaxHp, HP), 1);
-            if (hp <= 0)
-                die();
         }
     }
     [SerializeField] int hp;
@@ -58,19 +63,19 @@ public class CharacterManager : MonoBehaviour
 
     [SerializeField] protected Tilemap WallTileMap;
     [SerializeField] protected Tilemap PathFindTileMap;
-    [SerializeField] protected List<Tile> Path;
-    [SerializeField] protected List<Vector2> MinPos = new List<Vector2>();
     [SerializeField] protected List<Vector2> MovePos = new List<Vector2>();
-    [SerializeField] protected List<Vector2> ReMovePos = new List<Vector2>();
-    [SerializeField] protected List<float> Value = new List<float>();
     public Vector2 TargetPos;
     public Coroutine MoveCoroutine;
     public Coroutine AttackCoroutine;
     int FIndCount;
+    public List<Node> OpenNode = new List<Node>();
+    public List<Node> CloseNode = new List<Node>();
 
     protected bool Coru;
     protected bool goingthere;
     public MG MGStat;
+
+    Coroutine PathCo;
     protected virtual void Awake()
     {
         HpBar = Bar.transform.GetChild(1).gameObject;
@@ -104,21 +109,29 @@ public class CharacterManager : MonoBehaviour
     {
         Debug.Log("Um");
     }
-    public void AIStart(bool Re = false)
+    public void AIStart()
     {
+        TargetPos = new Vector2(Mathf.RoundToInt(TargetPos.x), Mathf.RoundToInt(TargetPos.y));
+        OpenNode.Clear();
+        CloseNode.Clear();
         MovePos.Clear();
-        MinPos.Clear();
-        Value.Clear();
-        if(!Re)
-            ReMovePos.Clear();
         float NowX = transform.position.x;
         float NowY = transform.position.y;
-        Vector2 NowPos = new Vector2(NowX, NowY);
+        Vector2 NowPos = new Vector2(Mathf.RoundToInt(NowX), Mathf.RoundToInt(NowY));
         MovePos.Add(NowPos);
         if (MoveCoroutine != null)
             StopCoroutine(MoveCoroutine);
         FIndCount = 0;
-        FindRoad();
+        if (PathCo != null)
+            StopCoroutine(PathCo);
+        foreach(KeyValuePair<Vector2,Node> kv in GM.player.CustomTileData)
+        {
+            Node node = GM.player.CustomTileData[kv.Key];
+            node.P = null;
+            node.G = 0;
+            node.H = 0;
+        }
+        PathCo = StartCoroutine(FindRoad());
     }
     public void Hit(int Attack, float AntiAmor)
     {
@@ -167,6 +180,20 @@ public class CharacterManager : MonoBehaviour
     {
         yield return new WaitForSeconds(Time);
         CanAttack = true;
+    }
+    void PathToMove(Node Start, Node End)
+    {
+        List<Vector2> path = new List<Vector2>();
+        Node current = End;
+        while (Vector2.Distance(current.Pos, Start.Pos) > 1f)
+        {
+            path.Add(current.Pos);
+            current = current.P;
+        }
+        path.Reverse();
+        MovePos = path.ToList();
+        StopCoroutine(MoveCoroutine);
+        MoveCoroutine = StartCoroutine(StartMove());
     }
     IEnumerator StartMove()
     {
@@ -218,108 +245,101 @@ public class CharacterManager : MonoBehaviour
             return true;
         return false;
     }
-    void FindRoad()
+    IEnumerator FindRoad()
     {
-        FIndCount++;
-        float NowX = Mathf.Round(MovePos[MovePos.Count - 1].x);
-        float NowY = Mathf.Round(MovePos[MovePos.Count - 1].y);
-        Vector2 NowPos = new Vector2(NowX, NowY);
-        if (Vector2.Distance(NowPos, TargetPos) < 1f)
+        Node StartNode = GM.player.CustomTileData[MovePos[0]];
+        Node Target = GM.player.CustomTileData[TargetPos];
+        OpenNode.Add(StartNode);
+        while (OpenNode.Count > 0)
         {
-            MoveCoroutine = StartCoroutine(StartMove());
-            return;
-        }
-        Vector2 Result = Vector2.zero;
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int y = -1; y <= 1; y++)
+            Node current = OpenNode[0];
+            for (int i = 1; i < OpenNode.Count; i++)
             {
-                if (x == 0 && y == 0)
-                    continue;
-                Result = NowPos + new Vector2(x, y);
-                if (WallTileMap.GetTile(WallTileMap.WorldToCell(Result)) == null && PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result)) == null && !MovePos.Contains(Result))
+                if (OpenNode[i].F < current.F || OpenNode[i].F == current.F && OpenNode[i].H < current.H)
+                    current = OpenNode[i];
+            }
+
+            OpenNode.Remove(current);
+            CloseNode.Add(current);
+            Debug.Log("Count");
+            FIndCount++;
+            if (FIndCount == 10000)
+            {
+                if (GM.player.AIErrorCoroutine != null)
+                    GM.player.StopCoroutine(GM.player.AIErrorCoroutine);
+                GM.player.AIErrorCoroutine = GM.player.StartCoroutine(GM.player.AIError());
+                yield break;
+            }
+            if (current == Target)
+            {
+                PathToMove(StartNode, current);
+                yield break;
+            }
+            Vector2 Result = Vector2.zero;
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int y = -1; y <= 1; y++)
                 {
-                    if (x == 1 && y == 1)
+                    if (x == 0 && y == 0)
+                        continue;
+                    Result = current.Pos + new Vector2(x, y);
+                    if (WallTileMap.GetTile(WallTileMap.WorldToCell(Result)) == null && PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result)) == null && !CloseNode.Contains(GM.player.CustomTileData[Result]))
                     {
-                        bool One = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null;
-                        bool Two = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(0, -y))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(0, -y))) != null;
-                        if (One && Two)
-                            continue;
+                        if (x == 1 && y == 1)
+                        {
+                            bool One = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null;
+                            bool Two = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(0, -y))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(0, -y))) != null;
+                            if (One && Two)
+                                continue;
+                        }
+                        else if (x == -1 && y == 1)
+                        {
+                            bool One = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null;
+                            bool Two = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(0, -y))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(0, -y))) != null;
+                            if (One && Two)
+                                continue;
+                        }
+                        else if (x == 1 && y == -1)
+                        {
+                            bool One = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null;
+                            bool Two = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(0, -y))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(0, -y))) != null;
+                            if (One && Two)
+                                continue;
+                        }
+                        else if (x == -1 && y == -1)
+                        {
+                            bool One = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null;
+                            bool Two = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(0, -y))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(0, -y))) != null;
+                            if (One && Two)
+                                continue;
+                        }
+                        Node NextNode = GM.player.CustomTileData[Result];
+                        float NewG = current.G + Vector2.Distance(current.Pos, Result);
+                        if (NewG < NextNode.G || !OpenNode.Contains(NextNode))
+                        {
+                            NextNode.G = NewG;
+                            NextNode.H = Vector2.Distance(NextNode.Pos, TargetPos);
+                            NextNode.P = current;
+                            if (!OpenNode.Contains(NextNode))
+                            {
+                                OpenNode.Add(NextNode);
+                            }
+                        }
                     }
-                    else if (x == -1 && y == 1)
-                    {
-                        bool One = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null;
-                        bool Two = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(0, -y))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(0, -y))) != null;
-                        if (One && Two)
-                            continue;
-                    }
-                    else if (x == 1 && y == -1)
-                    {
-                        bool One = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null;
-                        bool Two = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(0, -y))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(0, -y))) != null;
-                        if (One && Two)
-                            continue;
-                    }
-                    else if (x == -1 && y == -1)
-                    {
-                        bool One = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(-x, 0))) != null;
-                        bool Two = WallTileMap.GetTile(WallTileMap.WorldToCell(Result + new Vector2(0, -y))) != null || PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(Result + new Vector2(0, -y))) != null;
-                        if (One && Two)
-                            continue;
-                    }
-                    MinPos.Add(Result);
-                    Value.Add((Vector2.Distance(Result, NowPos) * 10) + (Vector2.Distance(Result, TargetPos) * 10));
                 }
             }
         }
-        if (Value.Count == 0 || FIndCount > 2000)
-        {
-            if (MovePos.Count < 2 || Value.Count == 0)
-            {
-                Debug.Log("¾îÂ¿");
-                Vector2 secondBest = Vector2.zero;
-                for (int i = 0; i < MovePos.Count; i++)
-                {
-                    if (Vector2.Distance(TargetPos, secondBest) > Vector2.Distance(TargetPos, MovePos[i]))
-                        secondBest = MovePos[i];
-                }
-                int Index = MovePos.IndexOf(secondBest);
-                while (MovePos.Count > Index + 1)
-                    MovePos.RemoveAt(Index + 1);
-                MoveCoroutine = StartCoroutine(StartMove());
-            }
-            else
-            {
-                ReMovePos.Add(MovePos[1]);
-                AIStart(true);
-            }
-            return;
-        }
-        float min = Value.Min();
-        List<int> Indexs = new List<int>();
-        for (int i = 0; i < Value.Count; i++)
-        {
-            if (min == Value[i])
-                Indexs.Add(i);
-        }
-        if (Indexs.Count > 1)
-        {
-            if ((int)(Vector2.Distance(MinPos[Indexs[0]], TargetPos) * 10) > (int)(Vector2.Distance(MinPos[Indexs[1]], TargetPos) * 10))
-            {
-                Value.RemoveAt(Indexs[0]);
-                MinPos.RemoveAt(Indexs[0]);
-            }
-            else
-            {
-                Value.RemoveAt(Indexs[1]);
-                MinPos.RemoveAt(Indexs[1]);
-            }
-        }
-        MovePos.Add(MinPos[Value.IndexOf(Value.Min())]);
-        Value.Clear();
-        MinPos.Clear();
-        if (Vector2.Distance(NowPos, TargetPos) > 0.05f && Target == null)
-            FindRoad();
+        yield return null;
+    }
+    float Distance(Vector2 A, Vector2 B)
+    {
+        float X = A.x - B.x;
+        float Y = A.y - B.y;
+        if (X < 0) X *= -1;
+        if (Y < 0) Y *= -1;
+        if (X > Y)
+            return 14 * X + 10 * (X - Y);
+        return 14 * X + 10 * (Y - X);
     }
     protected float BarValue(int Max, int Now)
     {

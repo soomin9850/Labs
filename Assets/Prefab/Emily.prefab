@@ -620,13 +620,13 @@ MonoBehaviour:
   CanAttack: 1
   Target: {fileID: 0}
   WallTileMap: {fileID: 0}
-  BuildingTileMap: {fileID: 0}
+  PathFindTileMap: {fileID: 0}
   Path: []
-  ClosePos: []
   MovePos: []
-  Value: []
   TargetPos: {x: 0, y: 0}
   MGStat: {fileID: 0}
+  OpenNode: []
+  CloseNode: []
   PlayerOrder: 0
 --- !u!114 &5591557829023595709
 MonoBehaviour:

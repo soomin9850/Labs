@@ -21,7 +21,7 @@ public class Bomb : MonoBehaviour
         {
             building.BuildingDie();
         }
-        RaycastHit2D[] hits = Physics2D.CircleCastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), 2.5f, transform.forward, 1, 1 << 6 | 1 << 7);
+        RaycastHit2D[] hits = Physics2D.CircleCastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), 5, transform.forward, 1, 1 << 6 | 1 << 7);
         for (int i = 0; i < hits.Length; i++)
         {
             hits[i].transform.GetComponent<CharacterManager>().HP -= 200;

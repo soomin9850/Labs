@@ -32,6 +32,8 @@ public class GameManager : MonoBehaviour
     public float[] BuildingSight;
 
     public int Stage = 0;
+
+    public Dictionary<string, KeyCode> Keys = new Dictionary<string, KeyCode>();
     void Awake()
     {
         Instance = this;

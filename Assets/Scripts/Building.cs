@@ -20,6 +20,8 @@ public class Building : CharacterManager
         }
         set
         {
+            if (value > MaxBarrier) value = MaxBarrier;
+            else if (value < 0) value = 0;
             barrier = value;
             BarrierBar.transform.localScale = new Vector2(BarValue(MaxBarrier, Barrier), 1);
         }

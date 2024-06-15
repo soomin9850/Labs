@@ -14,8 +14,10 @@ public class Car : MonoBehaviour
     public int MaxHP;
     public int HP;
     public bool isMove;
+    GameManager GM;
     void Start()
     {
+        GM = GameManager.Instance;
         PathFindTile = GameManager.Instance.PathFindTile;
         WallTile = GameManager.Instance.WallTile;
         HP = MaxHP;

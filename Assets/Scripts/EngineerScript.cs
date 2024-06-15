@@ -18,7 +18,7 @@ public class EngineerScript : MonoBehaviour
         {
             StartCoroutine(BuildWait(OBJ, 10 + (building.BuildingSize * 5)));
         }
-        else if(OBJ.CompareTag("Bridge"))
+        else if (OBJ.CompareTag("Bridge"))
         {
             if (OBJ.name.Contains("Big"))
             {
@@ -33,6 +33,10 @@ public class EngineerScript : MonoBehaviour
                 StartCoroutine(BuildWait(OBJ, 10));
             }
         }
+    }
+    public void TrenchFix()
+    {
+
     }
     public void MakeTrench()
     {
