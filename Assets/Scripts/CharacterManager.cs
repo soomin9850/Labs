@@ -252,7 +252,7 @@ public class CharacterManager : MonoBehaviour
         OpenNode.Add(StartNode);
         while (OpenNode.Count > 0)
         {
-            Node current = current = OpenNode[0];
+            Node current = OpenNode[0];
             for (int i = 1; i < OpenNode.Count; i++)
             {
                 if (OpenNode[i].F < current.F || OpenNode[i].F == current.F && OpenNode[i].H < current.H)
