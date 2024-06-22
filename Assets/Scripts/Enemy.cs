@@ -12,7 +12,7 @@ public class Enemy : CharacterManager
         die += EnemyDie;
         StopCoroutine(AttackCoroutine);
         Coru = false;
-        //Invoke("WaitStart", 10);
+        TargetPos = GM.player.Home.transform.position;
         AIStart();
     }
     public void WaitStart()
@@ -38,7 +38,7 @@ public class Enemy : CharacterManager
     }
     void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player")  && !Coru)
+        if (collision.CompareTag("Player") && !Coru)
         {
             if (CheckWall(collision.gameObject) && Vector2.Distance(collision.transform.position, transform.position) <= Sight)
             {
@@ -46,6 +46,8 @@ public class Enemy : CharacterManager
                 AttackCoroutine = StartCoroutine(AttackThis(collision.transform.gameObject));
             }
         }
+        else if (Coru && Target == null)
+            Coru = false;
     }
     
     IEnumerator AttackThis(GameObject OBJ)
@@ -82,6 +84,7 @@ public class Enemy : CharacterManager
             }
         }
         Coru = false;
+        TargetPos = GM.player.Home.transform.position;
         AIStart();
         attackEnd();
     }

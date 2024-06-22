@@ -47,7 +47,14 @@ public class StageSelect : MonoBehaviour
     }
     public void StageEnter()
     {
-        SceneManager.LoadScene(StageName);
+        int Count = 0;
+        for (int i = 0; i < GameManager.Instance.CharacterForm.Length; i++)
+        {
+            if (GameManager.Instance.CharacterForm[i] != null)
+                Count++;
+        }
+        if (Count > 0)
+            SceneManager.LoadScene(StageName);
     }
     public void ClickMoustPos()
     {

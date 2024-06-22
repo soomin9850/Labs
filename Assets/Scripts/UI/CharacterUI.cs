@@ -79,6 +79,14 @@ public class CharacterUI : MonoBehaviour
                 a[3].text = CM.AttackSpeed.ToString();
                 a[4].text = CM.AntiAmor.ToString() + "%";
                 a[5].text = CM.Sight.ToString();
+                if(CM.type==CharacterManager.Type.engineer)
+                {
+                    Char.Find("Skill").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "폭탄, 참호";
+                }
+                else if (CM.type == CharacterManager.Type.search)
+                {
+                    Char.Find("Skill").transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "지뢰";
+                }
             }
             Stat.SetActive(true);
         }
@@ -111,6 +119,8 @@ public class CharacterUI : MonoBehaviour
     }
     IEnumerator CharSpawn(int Index)
     {
+        if (GM.CharacterForm[Index] == null)
+            yield break;
         Icon.GetComponent<SpriteRenderer>().sprite = GM.CharacterForm[Index].GetComponent<CharacterManager>().Icon;
         while (true)
         {

@@ -1,10 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+[System.Serializable]
+public class SaveData
+{
+    public int stage;
 
+    public int RsIndex;
+
+    public int TargetFrameIndex;
+
+    public float AllSound;
+    public float BGM;
+    public float CharacterSound;
+
+    public List<string> keysKey = new List<string>();
+    public List<KeyCode> keysValue = new List<KeyCode>();
+}
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
@@ -38,7 +54,59 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        Load();
         SceneManager.LoadScene("Main");
+    }
+    public void Load()
+    {
+        string filePath = Application.persistentDataPath + "/SettingData.json";
+        if (File.Exists(filePath))
+        {
+            string JsonData = File.ReadAllText(filePath);
+            SaveData saveData = JsonUtility.FromJson<SaveData>(JsonData);
+            Sound[0] = saveData.AllSound;
+            Sound[1] = saveData.BGM;
+            Sound[2] = saveData.CharacterSound;
+            Stage = saveData.stage;
+            TargetFrameIndex = saveData.TargetFrameIndex;
+            RsIndex = saveData.RsIndex;
+            for (int i = 0;i<saveData.keysKey.Count;i++)
+            {
+                Keys[saveData.keysKey[i]] = saveData.keysValue[i];
+            }
+            Save();
+        }
+        else
+        {
+            Keys["CarEnteraction"] = KeyCode.E;
+            Keys["BuildingBomb"] = KeyCode.X;
+            Keys["Trench"] = KeyCode.Z;
+            Keys["TrenchFix"] = KeyCode.F;
+            Keys["PersonMine"] = KeyCode.C;
+            Keys["TankMine"] = KeyCode.V;
+            Keys["BuildingIn"] = KeyCode.I;
+            Keys["BuildingOut"] = KeyCode.O;
+            Save();
+        }
+    }
+    public void Save()
+    {
+        string filePath = Application.persistentDataPath + "/SettingData.json";
+        SaveData saveData = new SaveData();
+        foreach (KeyValuePair<string, KeyCode> kv in Keys)
+        {
+            saveData.keysKey.Add(kv.Key);
+            saveData.keysValue.Add(kv.Value);
+        }
+        saveData.AllSound = Sound[0];
+        saveData.BGM = Sound[1];
+        saveData.CharacterSound = Sound[2];
+        saveData.stage = Stage;
+        saveData.TargetFrameIndex = TargetFrameIndex;
+        saveData.RsIndex = RsIndex;
+
+        string JsonData = JsonUtility.ToJson(saveData, true);
+        File.WriteAllText(filePath, JsonData);
     }
     public void InBuilding(CharacterManager Building, CharacterManager Character)
     {

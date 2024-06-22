@@ -72,7 +72,7 @@ public class CharacterForming : MonoBehaviour
             SelectCharacter = GM.Characterlist.characters[index];
         }
     }
-    void OnEnable()
+    void Start()
     {
         GM = GameManager.Instance;
         GameObject Icon = transform.Find("IconList").gameObject;

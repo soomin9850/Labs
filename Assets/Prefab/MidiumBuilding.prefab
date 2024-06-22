@@ -293,7 +293,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.011307418, y: 1.0824773}
+  m_Offset: {x: 0.005673021, y: 1.0881504}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.4751204, y: 0.10240963}
@@ -304,7 +304,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.9321555, y: 2.7330956}
+  m_Size: {x: 0.95672935, y: 2.7444417}
   m_EdgeRadius: 0
 --- !u!114 &5307281235486921271
 MonoBehaviour:
@@ -322,6 +322,7 @@ MonoBehaviour:
   CharacterName: 
   Icon: {fileID: 0}
   Stdillust: {fileID: 0}
+  StatStdillust: {fileID: 0}
   MaxHp: 1
   Bar: {fileID: 194451004633441879}
   hp: 0
@@ -335,17 +336,18 @@ MonoBehaviour:
   CanAttack: 1
   Target: {fileID: 0}
   WallTileMap: {fileID: 0}
-  BuildingTileMap: {fileID: 0}
-  Path: []
-  ClosePos: []
+  PathFindTileMap: {fileID: 0}
   MovePos: []
-  Value: []
   TargetPos: {x: 0, y: 0}
+  OpenNode: []
+  CloseNode: []
   MGStat: {fileID: 0}
   BuildingSize: 1
   Destroyed: {fileID: 21300000, guid: c97a2fb38ba113742b61ca952c1c636d, type: 3}
+  BuildingWreck: {fileID: 3446010474764243825, guid: 10e7d369a3a75164a84243a111468935, type: 3}
   MaxBarrier: 1000
   BombReady: 0
+  Trench: 0
   barrier: 0
   ExitDir: {x: 0, y: -1, z: 0}
   InPlayer: 0

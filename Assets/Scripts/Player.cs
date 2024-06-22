@@ -107,10 +107,13 @@ public class Player : MonoBehaviour
                 Temp = GM.CharacterForm[i];
             }
         }
-        GameObject OBJ = Instantiate(Temp, Home.transform.position, Quaternion.identity);
-        GM.Character[TempIndex] = OBJ;
-        GM.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
-        LoseTrigger.Add(OBJ);
+        if(Temp != null)
+        {
+            GameObject OBJ = Instantiate(Temp, Home.transform.position, Quaternion.identity);
+            GM.Character[TempIndex] = OBJ;
+            GM.InBuilding(Home.transform.GetComponent<CharacterManager>(), OBJ.GetComponent<CharacterManager>());
+            LoseTrigger.Add(OBJ);
+        }
     }
     void Update()
     {
@@ -133,7 +136,7 @@ public class Player : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit2D hit = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 15);
+            RaycastHit2D hit = Physics2D.Raycast(mousePos(), transform.forward, 5, 1 << 15);
             if (hit.collider != null)
             {
                 BombRenderer = hit.transform.GetComponent<SpriteRenderer>();
@@ -144,7 +147,7 @@ public class Player : MonoBehaviour
         {
             if(BombRenderer != null)
                 BombRenderer.color = Color.red;
-            RaycastHit2D hit = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 15);
+            RaycastHit2D hit = Physics2D.Raycast(mousePos(), transform.forward, 5, 1 << 15);
             if(hit.collider != null)
             {
                 hit.transform.GetComponent<Bomb>().Click();
@@ -153,48 +156,44 @@ public class Player : MonoBehaviour
     }
     void Enteraction()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(GM.Keys["CarEnteraction"]))//차
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
-                CharacterManager CM = SelectCharacter[i].GetComponent<CharacterManager>();
-                if (CM.type == CharacterManager.Type.engineer || CM.type == CharacterManager.Type.rifle)
+                RaycastHit2D[] hits = Physics2D.CircleCastAll(SelectCharacter[i].transform.position, 1, transform.forward, 1, 1 << 0);
+                for (int j = 0; j < hits.Length; j++)
                 {
-                    RaycastHit2D[] hits = Physics2D.CircleCastAll(SelectCharacter[i].transform.position, 1, transform.forward, 1, 1 << 0);
-                    for (int j = 0; j < hits.Length; j++)
+                    if (hits[j].transform.CompareTag("Car"))
                     {
-                        if (hits[j].transform.CompareTag("Car"))
+                        float XDis = hits[j].transform.position.x - SelectCharacter[i].transform.position.x;
+                        float YDis = hits[j].transform.position.y - SelectCharacter[i].transform.position.y;
+                        if (MathF.Abs(XDis) > MathF.Abs(YDis))
                         {
-                            float XDis = hits[j].transform.position.x - SelectCharacter[i].transform.position.x;
-                            float YDis = hits[j].transform.position.y - SelectCharacter[i].transform.position.y;
-                            if (MathF.Abs(XDis) > MathF.Abs(YDis))
-                            {
-                                if (XDis < 0)
-                                    hits[j].transform.GetComponent<Car>().Move(Vector2.left);
-                                else if (XDis > 0)
-                                    hits[j].transform.GetComponent<Car>().Move(Vector2.right);
-                            }
-                            else
-                            {
-                                if (YDis < 0)
-                                    hits[j].transform.GetComponent<Car>().Move(Vector2.down);
-                                else if (YDis > 0)
-                                    hits[j].transform.GetComponent<Car>().Move(Vector2.up);
-                            }
-                            return;
+                            if (XDis < 0)
+                                hits[j].transform.GetComponent<Car>().Move(Vector2.left);
+                            else if (XDis > 0)
+                                hits[j].transform.GetComponent<Car>().Move(Vector2.right);
                         }
+                        else
+                        {
+                            if (YDis < 0)
+                                hits[j].transform.GetComponent<Car>().Move(Vector2.down);
+                            else if (YDis > 0)
+                                hits[j].transform.GetComponent<Car>().Move(Vector2.up);
+                        }
+                        return;
                     }
                 }
             }
         }
-        else if (Input.GetKey(KeyCode.X) && Input.GetMouseButtonDown(1) && BombCount < BombMaxCount) //건물폭파
+        else if (Input.GetKey(GM.Keys["BuildingBomb"]) && Input.GetMouseButtonDown(1) && BombCount < BombMaxCount) //건물폭파
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
                 if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.engineer)
                 {
-                    RaycastHit2D hit = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 9);
-                    RaycastHit2D hit1 = Physics2D.Raycast((Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 5, 1 << 0);
+                    RaycastHit2D hit = Physics2D.Raycast(mousePos(), transform.forward, 5, 1 << 9);
+                    RaycastHit2D hit1 = Physics2D.Raycast(mousePos(), transform.forward, 5, 1 << 0);
                     if (hit1.collider != null && hit1.transform.CompareTag("Bridge"))
                     {
                         SelectCharacter[i].GetComponent<EngineerScript>().MakeBomb(hit1.transform.gameObject);
@@ -208,7 +207,7 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetKeyDown(KeyCode.Z) && TrenchCount < TrenchMaxCount) // 참호
+        else if (Input.GetKeyDown(GM.Keys["Trench"]) && TrenchCount < TrenchMaxCount) // 참호
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
@@ -219,7 +218,22 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        else if(Input.GetKeyDown(KeyCode.C) && MineCount < MineMaxCount) //대인용지뢰
+        else if (Input.GetKey(GM.Keys["TrenchFix"]) && Input.GetMouseButton(1)) // 참호수리
+        {
+            for (int i = 0; i < SelectCharacter.Count; i++)
+            {
+                RaycastHit2D hit = Physics2D.Raycast(mousePos(), transform.forward, 5, 1 << 9);
+                if (SelectCharacter[i].GetComponent<CharacterManager>().type == CharacterManager.Type.engineer)
+                {
+                    if (hit.collider != null && hit.transform.GetComponent<Building>().Trench)
+                    {
+                        SelectCharacter[i].GetComponent<EngineerScript>().TrenchFix(hit.transform.gameObject);
+                        return;
+                    }
+                }
+            }
+        }
+        else if (Input.GetKeyDown(GM.Keys["PersonMine"]) && MineCount < MineMaxCount) //대인용지뢰
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
@@ -229,7 +243,7 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetKeyDown(KeyCode.V) && MineCount < MineMaxCount) //대전차지뢰
+        else if (Input.GetKeyDown(GM.Keys["TankMine"]) && MineCount < MineMaxCount) //대전차지뢰
         {
             for (int i = 0; i < SelectCharacter.Count; i++)
             {
@@ -242,7 +256,7 @@ public class Player : MonoBehaviour
     }
     void BuildingEnteraction()
     {
-        if (Input.GetKeyDown(KeyCode.O))
+        if (Input.GetKeyDown(GM.Keys["BuildingOut"]))
         {
             for (int i = 0; i < SelectBuilding.Count; i++)
             {
@@ -251,7 +265,7 @@ public class Player : MonoBehaviour
                     GM.OutBuilding(CM, CM.transform.GetChild(CM.transform.childCount - 1).transform.GetComponent<CharacterManager>());
             }
         }
-        else if (Input.GetKey(KeyCode.I) && Input.GetMouseButtonDown(1))
+        else if (Input.GetKey(GM.Keys["BuildingIn"]) && Input.GetMouseButtonDown(1))
         {
             RaycastHit2D hit = Physics2D.Raycast(mainCam.ScreenToWorldPoint(Input.mousePosition), transform.forward, 2, 1 << 9);
             if (hit.collider != null)
@@ -381,5 +395,9 @@ public class Player : MonoBehaviour
                 }
             }
         }
+    }
+    Vector2 mousePos()
+    {
+        return (Vector2)mainCam.ScreenToWorldPoint(Input.mousePosition);
     }
 }

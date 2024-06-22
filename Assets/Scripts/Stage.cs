@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Stage : MonoBehaviour
 {
     [SerializeField] GameObject[] Enemy;
     Coroutine Coroutine;
     [SerializeField] GameObject BattleEndDialogue;
-    GameObject EndTrigger;
+    List<GameObject> EndTrigger = new List<GameObject>();
     bool SummonEnd;
     void Start()
     {
@@ -15,14 +16,25 @@ public class Stage : MonoBehaviour
     }
     void Update()
     {
-        if (BattleEndDialogue != null && SummonEnd && EndTrigger == null)
+        for(int i = EndTrigger.Count-1; i >= 0; i--)
+        {
+            if (EndTrigger[i] == null)
+            {
+                EndTrigger.RemoveAt(i);
+            }
+        }
+        if (BattleEndDialogue != null && SummonEnd && EndTrigger.Count == 0)
         {
             SummonEnd = false;
             BattleEndDialogue.SetActive(true);
             string S = gameObject.name.Replace("Stage", "");
             int StageNum = int.Parse(S);
             if (GameManager.Instance.Stage < StageNum)
+            {
                 GameManager.Instance.Stage = StageNum;
+                SceneManager.LoadScene("Main");
+                GameManager.Instance.Save();
+            }
         }
     }
     IEnumerator Stage1(float Time)
@@ -40,7 +52,7 @@ public class Stage : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             GameObject OBJ = Instantiate(Enemy[0], new Vector2(-1, 20), Quaternion.identity);
             OBJ.GetComponent<CharacterManager>().TargetPos = GameManager.Instance.player.Home.transform.position;
-            EndTrigger = OBJ;
+            EndTrigger.Add(OBJ);
         }
         SummonEnd = true;
     }
@@ -66,7 +78,7 @@ public class Stage : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             GameObject OBJ = Instantiate(Enemy[0], new Vector2(3, -6), Quaternion.identity);
             OBJ.GetComponent<CharacterManager>().TargetPos = GameManager.Instance.player.Home.transform.position;
-            EndTrigger = OBJ;
+            EndTrigger.Add(OBJ);
         }
         SummonEnd = true;
     }
@@ -85,7 +97,7 @@ public class Stage : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             GameObject OBJ = Instantiate(Enemy[0], new Vector2(-16.5f, -7.5f), Quaternion.identity);
             OBJ.GetComponent<CharacterManager>().TargetPos = GameManager.Instance.player.Home.transform.position;
-            EndTrigger = OBJ;
+            EndTrigger.Add(OBJ);
         }
         SummonEnd = true;
     }

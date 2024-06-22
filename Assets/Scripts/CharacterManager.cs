@@ -185,7 +185,7 @@ public class CharacterManager : MonoBehaviour
     {
         List<Vector2> path = new List<Vector2>();
         Node current = End;
-        while (Vector2.Distance(current.Pos, Start.Pos) > 1f)
+        while (Vector2.Distance(current.Pos, Start.Pos) > 0.1f)
         {
             path.Add(current.Pos);
             current = current.P;
@@ -252,7 +252,7 @@ public class CharacterManager : MonoBehaviour
         OpenNode.Add(StartNode);
         while (OpenNode.Count > 0)
         {
-            Node current = OpenNode[0];
+            Node current = current = OpenNode[0];
             for (int i = 1; i < OpenNode.Count; i++)
             {
                 if (OpenNode[i].F < current.F || OpenNode[i].F == current.F && OpenNode[i].H < current.H)
@@ -261,15 +261,7 @@ public class CharacterManager : MonoBehaviour
 
             OpenNode.Remove(current);
             CloseNode.Add(current);
-            Debug.Log("Count");
             FIndCount++;
-            if (FIndCount == 10000)
-            {
-                if (GM.player.AIErrorCoroutine != null)
-                    GM.player.StopCoroutine(GM.player.AIErrorCoroutine);
-                GM.player.AIErrorCoroutine = GM.player.StartCoroutine(GM.player.AIError());
-                yield break;
-            }
             if (current == Target)
             {
                 PathToMove(StartNode, current);
@@ -329,7 +321,43 @@ public class CharacterManager : MonoBehaviour
                 }
             }
         }
+        int Second = 1;
+        while (Second < 5)
+        {
+            for (int x = 0; x <= Second; x++)
+            {
+                for (int y = 0; y <= Second; y++)
+                {
+                    Vector2 SecondBest =TargetPos + new Vector2(x, y);
+                    if (SecondBestAI(SecondBest))
+                        yield break;
+                }
+            }
+            for (int x = 0; x >= -Second; x--)
+            {
+                for (int y = 0; y >= -Second; y--)
+                {
+                    Vector2 SecondBest = TargetPos + new Vector2(x, y);
+                    if (SecondBestAI(SecondBest))
+                        yield break;
+                }
+            }
+            Second++;
+        }
+        if (GM.player.AIErrorCoroutine != null)
+            GM.player.StopCoroutine(GM.player.AIErrorCoroutine);
+        GM.player.AIErrorCoroutine = GM.player.StartCoroutine(GM.player.AIError());
         yield return null;
+    }
+    bool SecondBestAI(Vector2 SecondBest)
+    {
+        if (PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(SecondBest)) == null)
+        {
+            TargetPos = SecondBest;
+            AIStart();
+            return true;
+        }
+        return false;
     }
     float Distance(Vector2 A, Vector2 B)
     {

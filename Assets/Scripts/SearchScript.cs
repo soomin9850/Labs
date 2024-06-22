@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class SearchScript : MonoBehaviour
 {
     Tower tower;
     GameManager GM;
+    GameObject timerText = null;
+    Coroutine mine;
     void Start()
     {
         tower = GetComponent<Tower>();
@@ -14,7 +17,26 @@ public class SearchScript : MonoBehaviour
     }
     public void MakeMine(GameObject OBJ)
     {
-        StartCoroutine(minehWait(OBJ));
+        Stop();
+        mine = StartCoroutine(minehWait(OBJ));
+    }
+    void StopTimer()
+    {
+        if (timerText == null)
+            return;
+        TextMeshPro text = timerText.GetComponent<TextMeshPro>();
+        text.text = "";
+        GM.player.TimerPool.Enqueue(timerText);
+        timerText = null;
+    }
+    void Stop()
+    {
+        if (mine != null)
+        {
+            StopCoroutine(mine);
+            mine = null;
+        }
+        StopTimer();
     }
     IEnumerator minehWait(GameObject mine)
     {
@@ -27,7 +49,6 @@ public class SearchScript : MonoBehaviour
             a = 5;
         else
             a = 3;
-        GameObject timerText = null;
         if (GM.player.TimerPool.Count > 0)
         {
             timerText = GM.player.TimerPool.Dequeue();
@@ -40,7 +61,6 @@ public class SearchScript : MonoBehaviour
         {
             text.text = (((int)(Timer * 10)) * 0.1f).ToString();
             Timer += Time.deltaTime;
-            Debug.Log(Timer);
             yield return null;
         }
         if (Timer >= a)
@@ -49,8 +69,8 @@ public class SearchScript : MonoBehaviour
             Instantiate(mine, transform.position, Quaternion.identity);
         }
         tower.PlayerOrder = false;
-        text.text = "";
-        GM.player.TimerPool.Enqueue(timerText);
+        StopTimer();
+        mine = null;
         yield return null;
     }
 }

@@ -29,6 +29,8 @@ public class Tower : CharacterManager
                 AIStart();
             }
         }
+        else if (Coru && Target == null)
+            Coru = false;
     }
     void OnTriggerStay2D(Collider2D collision)
     {
@@ -40,6 +42,8 @@ public class Tower : CharacterManager
                 AttackCoroutine = StartCoroutine(AttackThis(collision.transform.gameObject));
             }
         }
+        else if (Coru && Target == null)
+            Coru = false;
     }
     public void ThatAttack(GameObject Target)
     {
@@ -83,14 +87,17 @@ public class Tower : CharacterManager
     }
     public IEnumerator GoInBuilding(GameObject OBJ)
     {
-        while (OBJ.TryGetComponent(out Building building) && !building.InPlayer)
+        if(OBJ.TryGetComponent(out Building building) && !building.InPlayer)
         {
-            if (Vector2.Distance(transform.position, OBJ.transform.position) < 3)
+            while (PlayerOrder)
             {
-                GameManager.Instance.InBuilding(building, this);
-                break;
+                if (Vector2.Distance(transform.position, OBJ.transform.position) < 3)
+                {
+                    GameManager.Instance.InBuilding(building, this);
+                    break;
+                }
+                yield return null;
             }
-            yield return null;
         }
         yield return null;
     }

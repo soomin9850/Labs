@@ -8,11 +8,12 @@ public class Building : CharacterManager
     public int BuildingSize = 0;
     SpriteRenderer SR;
     [SerializeField] Sprite Destroyed;
+    [SerializeField] GameObject BuildingWreck;
     Color Half = new Color(1, 1, 1, 0.5f);
     [SerializeField] int MaxBarrier;
     public bool BombReady;
     public bool Trench;
-    int Barrier
+    public int Barrier
     {
         get
         {
@@ -21,7 +22,6 @@ public class Building : CharacterManager
         set
         {
             if (value > MaxBarrier) value = MaxBarrier;
-            else if (value < 0) value = 0;
             barrier = value;
             BarrierBar.transform.localScale = new Vector2(BarValue(MaxBarrier, Barrier), 1);
         }
@@ -46,16 +46,13 @@ public class Building : CharacterManager
     }
     void Start()
     {
+        PathFindTileMap = GM.PathFindTile;
+        WallTileMap = GM.WallTile;
         if (Trench)
         {
-            for (int x = 0; x < 2; x++)
-            {
-                for (int y = 0; y < 1; y++)
-                {
-                    Vector3Int vector3 = new Vector3Int(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) + y);
-                    PathFindTileMap.SetTile(vector3, GameManager.Instance.TileBase);
-                }
-            }
+            Vector3Int vector3 = new Vector3Int(Mathf.RoundToInt(transform.position.x - 0.5f), Mathf.RoundToInt(transform.position.y - 0.5f));
+            transform.position = vector3;
+            PathFindTileMap.SetTile(vector3, GameManager.Instance.TileBase);
         }
         AttackCoroutine = StartCoroutine(AttackThis(null));
         die += BuildingDie;
@@ -77,6 +74,8 @@ public class Building : CharacterManager
         {
             Building_CheckWall(collision.gameObject);
         }
+        else if (Coru && Target == null)
+            Coru = false;
         else if (collision.CompareTag("Player"))
             SR.color = Half;
     }
@@ -139,6 +138,45 @@ public class Building : CharacterManager
             character.die();
         }
         SR.sprite = Destroyed;
+        List<Vector2> list = new List<Vector2>();
+        for (int x = 0; x <= 5; x++)
+        {
+            for (int y = 0; y <= 5; y++)
+            {
+                Vector2 RandomList = new Vector2(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) + y);
+                if (PathCheck(RandomList))
+                {
+                    list.Add(RandomList);
+                }
+            }
+        }
+        for (int x = 0; x >= -5; x--)
+        {
+            for (int y = 0; y >= -5; y--)
+            {
+                Vector2 RandomList = new Vector2(Mathf.RoundToInt(transform.position.x) + x, Mathf.RoundToInt(transform.position.y) + y);
+                if (PathCheck(RandomList))
+                {
+                    list.Add(RandomList);
+                }
+            }
+        }
+        int Repeat = BuildingSize + 1;
+        while (Repeat > 0)
+        {
+            int i = Random.Range(0, list.Count);
+            list.RemoveAt(i);
+            Instantiate(BuildingWreck, list[i], Quaternion.identity);
+            Repeat--;
+        }
         Destroy(this);
+    }
+    bool PathCheck(Vector2 RandomList)
+    {
+        if (PathFindTileMap.GetTile(PathFindTileMap.WorldToCell(RandomList)) == null)
+        {
+            return true;
+        }
+        return false;
     }
 }

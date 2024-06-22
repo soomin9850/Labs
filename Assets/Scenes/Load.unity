@@ -198,7 +198,7 @@ MonoBehaviour:
   - 1.5
   - 2
   - 0.8
-  Stage: 2
+  Stage: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
